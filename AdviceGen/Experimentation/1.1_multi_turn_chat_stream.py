@@ -9,7 +9,7 @@ import openai
 # updated to use pydantic-settings instead of dotenv.
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
-    GITHUB_TOKEN: str
+    GITHUB_TOKEN: str = "None"
     GITHUB_MODEL: str = "meta/Meta-Llama-3.1-8B-Instruct"
     API_HOST: Optional[str] = None
     AZURE_OPENAI_ENDPOINT: Optional[str] = None

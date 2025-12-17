@@ -4,3 +4,7 @@ development.code-workspace
 
 # MacOS
 .DS_Store
+
+# Python
+__pycache__/
+.venv/

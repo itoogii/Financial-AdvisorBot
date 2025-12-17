@@ -1,0 +1,6 @@
+development.code-workspace
+.vscode/
+.env
+
+# MacOS
+.DS_Store

@@ -45,7 +45,7 @@ OLLAMA_MODEL=llama3.1:8b
 
 ### Python environment on subsystem Linux on Windows PC
 I used the uv in the WSL. 
-The uv documentation shows that to install the .venv to create local environment
+The .venv is created for local environment
 ```shell
 uv python install 3.12
 uv venv --python 3.12

@@ -1,8 +1,6 @@
 # Original: https://github.com/Azure-Samples/python-openai-demos/blob/main/chat_history_stream.py
 from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-import azure.identity
 import openai
 
 
@@ -41,7 +39,7 @@ else:
 messages = [
     {
         "role": "system",
-        "content": 'Instruction: You are a conversational designer. You are building a chatbot to help users find information about their insurance claims. Insurance claims include the following information: a claim date, a member ID, and a claim amount. Generate conversational responses until you have collected all three pieces of information. When you have all the information, respond with a  payload in this format: {"memberID": "(the member id collected)", "claimDate": "(the claim date collected)", "claimAmount": "(the claim amount collected)"}',
+        "content": 'Instruction: You are a conversational designer. You are building a chatbot to help users find information about stock investment. To better support the user obtain the following information: an income, risk tolerance to the market fluctuations, and an age. Generate conversational responses until you have collected all three pieces of information. When you have all the information, respond with a  payload in this format: {"age": "(the age is collected)", "income": "(the income is collected)", "riskTolerance": "(the risk tolerance collected)"}',
     },
 ]
 

@@ -1,0 +1,5 @@
+advisory_task:
+  description: >
+    Provide stock market investment advise
+  expected_output: >
+    Strategic and tactical advise on short term, long term investment in stock market for Apple inc stock. Explain what is about the investing and what to watch. 

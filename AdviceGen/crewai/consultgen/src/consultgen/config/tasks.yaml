@@ -1,0 +1,32 @@
+research_task:
+  description: >
+    Conduct a thorough user research for the financial advisor bot project. 
+    You need to generate a dataset with your research study result for more than hundreds of financial advisor chatbot application users. Stop immediately after generating user information for 500 users. 
+  expected_output: >
+    The result should include these common information about the users:
+    •	Name, age, gender, location (in UK or USA)
+    •	Experience level in investment and knowledge in stock market
+    •	Context for how they would interact with the product: Through choice or required by their job? How often would they use it? Do they typically use a desktop computer, their phone, or another device to access it?
+    •	Goals and concerns in financial situations or stock investment
+    •	Optional memory influenced by long and short term personal financial experiences
+  agent: user_researcher
+
+persona_task:
+  description: >
+    Review and identify the characteristics of the user information from the user research. 
+    Begin the persona-creation process by identifying characteristics of users observed from user research. As you group these attributes into clusters, they will begin forming clear characters. If several seem too similar, merge them together or eliminate any groups that appear less relevant to the product or business. Once distinct roles emerge, add specific details to make the character more realistic, believable, and memorable.Each piece of information should have a purpose for being included and if it would not affect the final design or help make any decision easier, remove it.
+    Make sure the result is complete and contains all relevant information. Generate user personas for at least 100 users based on the user research result, but do not exceed 500 users. Stop immediately after generating user personas for 500 users.
+  expected_output: >
+    JSON formatted list of user personas with:
+    •	Name, age, gender, location (in UK or USA)
+    •	Qualities summarizing their character (Avoid getting too witty, as doing so may taint the persona as being too fun and not a useful tool. Example: friendly, humorous)
+    •	Experience level with investment in stock market
+    •	Context for how they would interact with the product: Through choice or required by their job? How often would they use it? Do they typically use a desktop computer, their phone, or another device to access it?
+    •	Goals and concerns in financial situations or stock investment
+    •	Quotes to sum up the persona's attitude
+    •	Lifestyle (work, hobbies)
+    •	Speech style
+    •	Generate prompt that can be used with AI image generators to get the user images. 
+    •	Optional memory influenced by long and short term personal financial experiences
+  agent: persona_creator
+  output_file: personas.json

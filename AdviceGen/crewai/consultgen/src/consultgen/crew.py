@@ -1,18 +1,17 @@
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
+from consultgen.models import ConveGen
 from typing import List
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
-llm = LLM(
-    model="ollama/gemma3:4b",
-    base_url="http://localhost:11434"
-)
+llm = LLM(model="ollama/gemma3:4b", base_url="http://localhost:11434")
+
 
 @CrewBase
-class Consultgen():
+class Consultgen:
     """Consultgen crew"""
 
     agents: List[BaseAgent]
@@ -21,23 +20,23 @@ class Consultgen():
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
     # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
-    
+
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
     @agent
     def user_researcher(self) -> Agent:
         return Agent(
-            config=self.agents_config['user_researcher'], # type: ignore[index]
+            config=self.agents_config["user_researcher"],  # type: ignore[index]
             verbose=True,
-            llm=llm
+            llm=llm,
         )
 
     @agent
     def persona_creator(self) -> Agent:
         return Agent(
-            config=self.agents_config['persona_creator'], # type: ignore[index]
+            config=self.agents_config["persona_creator"],  # type: ignore[index]
             verbose=True,
-            llm=llm
+            llm=llm,
         )
 
     # To learn more about structured task outputs,
@@ -46,14 +45,14 @@ class Consultgen():
     @task
     def research_task(self) -> Task:
         return Task(
-            config=self.tasks_config['research_task'], # type: ignore[index]
+            config=self.tasks_config["research_task"],  # type: ignore[index]
         )
 
     @task
     def reporting_task(self) -> Task:
         return Task(
-            config=self.tasks_config['persona_task'], # type: ignore[index]
-            output_file='report.md'
+            config=self.tasks_config["persona_task"],  # type: ignore[index]
+            output_file="report.md",
         )
 
     @crew
@@ -63,8 +62,8 @@ class Consultgen():
         # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
 
         return Crew(
-            agents=self.agents, # Automatically created by the @agent decorator
-            tasks=self.tasks, # Automatically created by the @task decorator
+            agents=self.agents,  # Automatically created by the @agent decorator
+            tasks=self.tasks,  # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=True,
             # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/

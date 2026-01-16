@@ -1,15 +1,9 @@
-research_task:
+research_investor_task:
   description: >
-    Conduct a thorough user research for the financial advisor bot project. 
-    You need to generate a dataset with your research study result for more than hundreds of financial advisor chatbot application users. Stop immediately after generating user information for 500 users. 
+    Conduct a thorough retail investor research for the financial advisor chatbot application. User research focuses in US and UK retail investors.
+    Identify and define diverse retail investor profiles covering a wide range of financial literacy levels, investment goals, and tech comfort levels. Gather insights on demographics, investment behaviors, risk tolerances, emotional triggers, and common pain points faced by retail investors in the stock market. Ensure the research captures the needs and preferences of various age groups including GenZ, Millennials, GenX, and Boomers. The research findings will be used to create realistic and well-defined user personas for the chatbot application.
   expected_output: >
-    The result should include these common information about the users:
-    - Name, age, gender, location (in UK or USA), marital status, children (yes/no), occupation
-    - Experience level in investment and knowledge in stock market
-    - Context for how they would interact with the product: Through choice or required by their job? How often would they use it? Do they typically use a desktop computer, their phone, or another device to access it?
-    - Why the user is interested in investment
-    - User's concerns and what does the user look to make investment decision
-    - Optional memory influenced by long and short term personal financial experiences
+    Comprehensive user research report detailing retail investor demographics, their characteristics, behaviors, concerns and needs.
   agent: user_researcher
 
 persona_task:
@@ -31,3 +25,18 @@ persona_task:
     -	Image prompt that describes the user persona for AI image generation 
   agent: persona_creator
   output_file: personas.json
+
+
+scenario_task:
+  description: >
+    Using the developed user personas, design engaging conversation scenarios for the AI-powered financial advisor chatbot application. Each scenario should reflect realistic user interactions based on the characteristics and needs of the personas, covering stock investment topics and financial dialogue in stock investment. Ensure that the scenarios include diverse situations such as market fluctuations, investment goal setting, and risk tolerance discussions to prepare the chatbot for a wide range of user inquiries. The chatbot responses must be informative, empathetic, and tailored to user needs, guiding users through investment decisions, risk assessments, and portfolio management while ensuring compliance with financial regulations based on user locations in the US or UK.
+  expected_output: >
+    A collection of detailed conversation scenarios in JSON format, each linked to specific user personas. Each scenario should include:
+    - Persona reference
+    - Scenario context
+    - User goals and concerns
+    - Sample dialogue exchanges
+    - Key points for chatbot responses
+  agent: scenario_planner
+  output_file: conversation_scenarios.json
+

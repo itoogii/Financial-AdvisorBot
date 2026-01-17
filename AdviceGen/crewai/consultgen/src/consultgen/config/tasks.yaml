@@ -3,14 +3,14 @@ research_investor_task:
     Conduct a thorough retail investor research for the financial advisor chatbot application. User research focuses in US and UK retail investors.
     Identify and define diverse retail investor profiles covering a wide range of financial literacy levels, investment goals, and tech comfort levels. Gather insights on demographics, investment behaviors, risk tolerances, emotional triggers, and common pain points faced by retail investors in the stock market. Ensure the research captures the needs and preferences of various age groups including GenZ, Millennials, GenX, and Boomers. The research findings will be used to create realistic and well-defined user personas for the chatbot application.
   expected_output: >
-    Comprehensive user research report detailing retail investor demographics, their characteristics, behaviors, concerns and needs.
+    Comprehensive user research detailing retail investor demographics, their characteristics, behaviors, concerns and needs. The output will be used by the persona_creator agent to create user personas.
   agent: user_researcher
+  output_file: research.md
 
 persona_task:
   description: >
-    Review and identify the characteristics of the user information from the user research. 
-    Begin the persona-creation process by identifying characteristics of users observed from user research. As you group these attributes into clusters, they will begin forming clear characters. If several seem too similar, merge them together or eliminate any groups that appear less relevant to the product or business. Once distinct roles emerge, add specific details to make the character more realistic, believable, and memorable. Each piece of information should have a purpose for being included and if it would not relate the persona, remove it.
-    Make sure the result is complete and contains all relevant information. Generate user personas for at least 100 users based on the user research result, but do not exceed 500 users. Stop immediately after generating user personas for 500 users.
+    Review and identify the characteristics of the users provided by the user researcher and create individual user personas. Assign a name, age, lifestyle, natural speech style, gender, their locations in either in the US or UK, marital status, family information, occupation, their financial health, their risk tolerance in investing, and their prior experience in stock market investment. Add specific details to make the character more realistic, believable, and memorable. Each piece of information should have a purpose for being included in the persona, and should contribute creating realistic conversation scenarios later.
+    Make sure the result is complete and contains all relevant information. Create 200 different users personas. 
   expected_output: >
     JSON formatted list of user personas with:
     -	Name
@@ -21,22 +21,62 @@ persona_task:
     - children (yes/no)
     - occupation
     -	Speech style
-    - Description (Qualities summarizing their character and persona's attitude. Avoid getting too witty, as doing so may taint the persona as being too fun and not a useful tool. Experience level in the stock market investment. Goals and concerns. Lifestyle. The preference of the investment as such value stock, regular dividend, or growth stock. Optionally add memory that influenced by the user's long and short term personal financial experiences)
-    -	Image prompt that describes the user persona for AI image generation 
+    - Extra information (Qualities summarizing their character and persona's attitude. Avoid getting too witty, as doing so may taint the persona as being too fun and not a useful tool. Experience level in the stock market investment. Goals and concerns. Lifestyle. The preference of the investment as such value stock, regular dividend, or growth stock. Optionally, you can include memory that influenced by the user's long and short term personal financial experiences)
+    -	Image prompt that describes the user persona for image generation purposes
   agent: persona_creator
   output_file: personas.json
 
 
 scenario_task:
   description: >
-    Using the developed user personas, design engaging conversation scenarios for the AI-powered financial advisor chatbot application. Each scenario should reflect realistic user interactions based on the characteristics and needs of the personas, covering stock investment topics and financial dialogue in stock investment. Ensure that the scenarios include diverse situations such as market fluctuations, investment goal setting, and risk tolerance discussions to prepare the chatbot for a wide range of user inquiries. The chatbot responses must be informative, empathetic, and tailored to user needs, guiding users through investment decisions, risk assessments, and portfolio management while ensuring compliance with financial regulations based on user locations in the US or UK.
+    Using the provided user personas, design engaging conversation scenarios for the user in triggering situations that affects the user personas goals. Each scenario should reflect realistic user interactions based on the characteristics and needs of the personas. Ensure that the scenarios include diverse situations to cover wide range of user inquiries. Generate at least 1000 different conversation scenarios and a natural conversation starter. 
   expected_output: >
     A collection of detailed conversation scenarios in JSON format, each linked to specific user personas. Each scenario should include:
-    - Persona reference
+    - Persona
     - Scenario context
     - User goals and concerns
-    - Sample dialogue exchanges
-    - Key points for chatbot responses
+    - dialogue starter context
   agent: scenario_planner
   output_file: conversation_scenarios.json
 
+
+user_conversation:
+  description: >
+    Roleplay as the user {user_name} with retail investor personas and engage in realistic conversations with the financial advisor. Act naturally in the user persona character with the triggering event of the scenario context. The conversation starts by providing background information about the user to the advisor including: name, age, gender, location (UK or USA), risk tolerance level (low, medium, high), investment experience level (beginner, intermediate, expert), investment goals (saving for retirement, generating additional income, building an emergency fund, to get rich), and any extra information about the users those are helpful (particular stocks or sector they are interested in, prior knowledge or memory about the user based on prior conversations with the advisor). After that user begin the conversation with dialogue starter context provided by the scenario_planner with our without responding to the greetings of the advisor (user may be in a situation and may immediately jump into the conversation to get answer from the advisor). Once the conversation is started with the context, the user will continue the conversation with the financial adviser (follow up, react to the last response). Each interaction should reflect the unique characteristics, goals, and concerns of the user persona to allow tailored financial advice and support from the advisor. Create realistic and natural conversation with the financial advisor in stock investment, market analysis, investment strategies, risk management, and portfolio diversification.  Ensure that the dialogue is natural and reflects the persona's speech style and preferences. 
+  expected_output: >
+    An user message to the financial advisor
+  agent: user_simulator
+
+financial_advice:
+  description: >
+    Users engage in realistic conversations with you for financial advises. They will start the conversation by providing background information that you need to be familiar with. This helps you to provide personalized financial advice to the users. Begin the conversation with a friendly greetings, and start responding to the user inquiries. 
+    Provide accurate, personalized, and compliant financial advice to retail investors based on their defined personas and scenarios. Tailor your responses to address the unique needs, goals, and concerns of each persona, ensuring that the advice is relevant and actionable. Cover a range of stock investment topics, including market trends, investment strategies, risk management, and portfolio diversification. Maintain a friendly and approachable tone while ensuring that all advice adheres to financial regulations applicable to the user's location in the US or UK.
+    - You don't need to address the user by name in every turn and it will make the conversation more natural
+    - You can ask questions, provide clarifications, and offer suggestions to guide the conversation.
+    - Never sound artificial or robotic.
+    - You cannot express promise such as 'I will do that' or 'I promise the stock will perform well'.
+    - ALWAYS prioritize safety: remind the user about investment risks and uncertainties when providing advice.
+    - Use clear and simple language suitable for the user's financial literacy level.
+    - Avoid jargon and technical terms unless the user demonstrates understanding.
+    - Tailor your responses to the user's age, risk tolerance, and financial health.
+    - Provide balanced advice considering both short-term and long-term financial goals.
+    - If the user provides extra information, incorporate it into your advice appropriately.
+    - Always encourage the user to seek personalized advice from a certified financial advisor.
+    - Ensure ethical standards in all responses.
+    - Ensure compliance with financial regulations specific to the user's location.
+  expected_output: >
+    An expert response that provides accurate, personalized, and compliant financial advice to retail investors.
+  agent: financial_advisor
+
+compliance_review:
+  description: >
+    Review the financial advice and interactions between the financial advisor and retail investors to ensure compliance with relevant regulations and standards. Assess the accuracy, relevance, and legality of the advice provided, ensuring that it adheres to financial regulations applicable to the user's location in the US or UK. Identify any potential compliance issues and provide feedback and recommendations to improve the financial advisor's practices. Ensure that all advice is clear   and does not mislead users, avoiding any promises of high returns without proper disclosures.
+  expected_output: >
+    A detailed compliance review report in JSON format, documenting the assessment of financial advice interactions. Each entry should include:
+    - Persona reference
+    - Conversation context
+    - Compliance assessment
+    - Identified issues   
+    - Recommendations for improvement
+  agent: compliance_officer
+  output_file: compliance_review_report.json

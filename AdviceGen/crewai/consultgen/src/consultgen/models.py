@@ -20,14 +20,11 @@ class ConvoGen(BaseModel):
         ..., description="User's overall financial health status"
     )
     investment_goals: str = Field(..., description="User's primary investment goals")
-
+    experience_level: str = Field(
+        ..., description="User's prior investment experience level"
+    )
     extra_information: str = Field(
         "", description="Any additional relevant information about the user"
-    )
-
-    # Contextual Metadata
-    market_condition: str = Field(
-        ..., description="Current market condition (bullish, bearish, volatile, stable)"
     )
 
     # The field we will populate
@@ -45,7 +42,8 @@ class ConvoGen(BaseModel):
             f"You are currently speaking with {self.user_name}, who is {self.age} years old and based in {self.location}. "
             f"User context: Risk tolerance is {self.risk_tolerance}; Financial Health is {self.financial_health}; "
             f"Primary goal to invest is {self.investment_goals}. "
-            f"Current Market condition: {self.market_condition}. "
+            f"Prior investment experience level: {self.experience_level}. "
+            f"Extra information about the user: {self.extra_information}."
             "\n# CONVERSATION GUIDELINES (ConvoGen Rules):\n"
             "- You don't need to address the user by name in every turn and it will make the conversation more natural.\n"
             "- You can ask questions, provide clarifications, and offer suggestions to guide the conversation.\n"

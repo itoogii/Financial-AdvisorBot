@@ -7,7 +7,7 @@ research_investor_task:
   agent: user_researcher
   output_file: research.md
 
-persona_task:
+persona_creation_task:
   description: >
     Use the user research you got and create individual user personas. Make sure the personas have  Name, age, gender, location (in UK or USA), marital status, childrens (yes/no), occupation
     Qualities summarizing their character (Avoid getting too witty, as doing so may taint the persona as being too fun and not a useful tool. Example: friendly, humorous)
@@ -30,7 +30,7 @@ persona_task:
   output_file: personas.json
 
 
-scenario_task:
+scenario_creation_task:
   description: >
     Using the provided user personas, design engaging conversation scenarios for the user in triggering situations that affects the user personas goals. Each scenario should reflect realistic user interactions based on the characteristics and needs of the personas. Ensure that the scenarios include diverse conditions to cover wide range of user inquiries. Generate 1000 different realistic conversation scenarios. 
   expected_output: >

@@ -10,15 +10,11 @@ persona_creation_task:
   description: >
     Use the research_investor_task output and create individual user personas. Make sure the personas have Name, age, gender, location (in UK or USA), marital status, childrens (yes/no), occupation, qualities summarizing their character (Avoid getting too witty, as doing so may taint the persona as being too fun and not a useful tool Example: friendly, humorous), experience level in stock market investment, their financial health, their investment risk tolerance, their prior experience in stock market investment, quotes to sum up the persona's attitude, lifestyle (work, hobbies), speech style, optional memory that influenced by long and short term personal financial experiences. Make sure the persona scontains all relevant information and include specific details to make the character more realistic, believable, and memorable. Each piece of information should have a purpose for being included in the persona, and should contribute creating realistic conversation scenarios by the design crew later.
     CRITICAL REQUIREMENTS:
-    - Create EXACTLY 100 complete, unique user personas
-    - Each persona must have ALL required fields filled out completely
-    - Output MUST be in valid format matching the PersonaList model
-    - DO NOT use phrases like "similarly for personas 26-100" or "full list on request"
-    - DO NOT add disclaimers or notes at the end
-    - Complete the entire list of 100 personas in one output
-    - Ensure variety across age groups (GenZ, Millennials, GenX, Boomers)
-    - Ensure geographic diversity (US and UK locations)
-    - Ensure diversity in financial literacy, risk tolerance, and investment experience
+    - Create exactly 100 complete, unique user personas
+    - Each persona must have all required fields filled out completely
+    - Output must be in valid format matching the PersonaList model
+    - Do not expect follow-up requests to complete remaining personas. You are diligent and determined to always perform the highest quality work as requested.
+    - Complete the entire list of 100 personas in single output
   agent: persona_creator
   context: 
     - research_investor_task

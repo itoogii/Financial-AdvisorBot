@@ -1,22 +1,28 @@
 research_investor_task:
   description: >
     Conduct a thorough research about retail investors in US and UK users.
-    Identify and find diverse retail investor information covering a wide range of financial literacy levels, investment goals, and tech comfort levels. Make sure you find demographics, investment behaviors, risk tolerances, emotional triggers, and common pain points encountered of retail investors in the stock market. Ensure the research captures the needs and preferences of age generations in GenZ, Millennials, GenX, and Boomers. Your research findings will be used by persona expert to create realistic and well-defined user personas for the financial advisor application users.
+    Identify and find diverse retail investor information covering a wide range of financial literacy levels, investment goals, and tech comfort levels. Make sure you find demographics, investment behaviors, risk tolerances, emotional triggers, and common pain points encountered of retail investors in the stock market. Ensure the research captures the needs and preferences of age generations in GenZ, Millennials, GenX, and Boomers. Your research findings will be used by lead user experience specialist in persona creation to create realistic and complete user personas for the financial advisor chatbot application.
   expected_output: >
-    Well structured, comprehensive user research detailing retail investors with demographics, their characteristics, behaviors, concerns and interests. Formatted as markdown without '```'
+    Well structured, comprehensive and COMPLETE user research detailing retail investors with demographics, their characteristics, behaviors, concerns and interests. Formatted as markdown without '```'
   agent: user_researcher
 
 persona_creation_task:
   description: >
-    Use the user research you got and create individual user personas. Make sure the personas have  Name, age, gender, location (in UK or USA), marital status, childrens (yes/no), occupation
-    Qualities summarizing their character (Avoid getting too witty, as doing so may taint the persona as being too fun and not a useful tool. Example: friendly, humorous)
-    Experience level with investment in stock market, their financial health, their risk tolerance in investing, their prior experience in stock market investment,
-    Quotes to sum up the persona's attitude, Lifestyle (work, hobbies), speech style, optionally memory influenced by long and short term personal financial experiences and contains any and all relevant information. Include specific details to make the character more realistic, believable, and memorable. Each piece of information should have a purpose for being included in the persona, and should contribute creating realistic conversation scenarios later.
-    Make sure the result is complete and contains all relevant information. Create 100 different users personas. 
+    Use the research_investor_task output and create individual user personas. Make sure the personas have Name, age, gender, location (in UK or USA), marital status, childrens (yes/no), occupation, qualities summarizing their character (Avoid getting too witty, as doing so may taint the persona as being too fun and not a useful tool Example: friendly, humorous), experience level in stock market investment, their financial health, their investment risk tolerance, their prior experience in stock market investment, quotes to sum up the persona's attitude, lifestyle (work, hobbies), speech style, optional memory that influenced by long and short term personal financial experiences. Make sure the persona scontains all relevant information and include specific details to make the character more realistic, believable, and memorable. Each piece of information should have a purpose for being included in the persona, and should contribute creating realistic conversation scenarios by the design crew later.
+    CRITICAL REQUIREMENTS:
+    - Create EXACTLY 100 complete, unique user personas
+    - Each persona must have ALL required fields filled out completely
+    - Output MUST be in valid format matching the PersonaList model
+    - DO NOT use phrases like "similarly for personas 26-100" or "full list on request"
+    - DO NOT add disclaimers or notes at the end
+    - Complete the entire list of 100 personas in one output
+    - Ensure variety across age groups (GenZ, Millennials, GenX, Boomers)
+    - Ensure geographic diversity (US and UK locations)
+    - Ensure diversity in financial literacy, risk tolerance, and investment experience
   agent: persona_creator
   context: 
     - research_investor_task
   expected_output: PersonaList
-  output_file: personas.json
+  output_file: personas.md
 
 

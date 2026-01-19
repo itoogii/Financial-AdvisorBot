@@ -50,6 +50,7 @@ class UserResearchCrew:
         return Agent(
             config=self.agents_config['persona_creator'], # type: ignore[index]
             llm=llm_azure,
+            verbose=True
         )
 
     # To learn more about structured task outputs,

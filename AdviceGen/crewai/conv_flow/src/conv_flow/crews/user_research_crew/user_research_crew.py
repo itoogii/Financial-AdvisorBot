@@ -38,7 +38,7 @@ class UserResearchCrew:
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
     @agent
-    def researcher(self) -> Agent:
+    def user_researcher(self) -> Agent:
         return Agent(
             config=self.agents_config['user_researcher'], # type: ignore[index]
             llm=llm_azure,
@@ -56,7 +56,7 @@ class UserResearchCrew:
     # task dependencies, and task callbacks, check out the documentation:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     @task
-    def research_task(self) -> Task:
+    def research_investor_task(self) -> Task:
         return Task(
             config=self.tasks_config['research_investor_task'], # type: ignore[index]
         )

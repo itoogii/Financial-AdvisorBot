@@ -38,7 +38,7 @@ class ScenarioCrew():
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
     @agent
-    def researcher(self) -> Agent:
+    def scenario_planner(self) -> Agent:
         return Agent(
             config=self.agents_config['scenario_planner'], # type: ignore[index]
             llm=llm_azure,
@@ -46,7 +46,7 @@ class ScenarioCrew():
         )
 
     @agent
-    def reporting_analyst(self) -> Agent:
+    def scenario_reviewer(self) -> Agent:
         return Agent(
             config=self.agents_config['scenario_reviewer'], # type: ignore[index]
             llm=llm_azure,

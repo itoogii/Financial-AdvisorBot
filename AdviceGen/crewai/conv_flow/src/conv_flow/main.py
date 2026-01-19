@@ -44,8 +44,7 @@ class ScenarioList(BaseModel):
     scenarios: List[Scenario] = Field(description="List of user research scenarios")
 
 class GenState(BaseModel):
-    sentence_count: int = 1
-    poem: str = ""
+    message: str = ""
 
 
 class UXFlow(Flow[GenState]):
@@ -55,24 +54,26 @@ class UXFlow(Flow[GenState]):
         # Run the content crew for this section
         result = UserResearchCrew().crew().kickoff()
         print("UX research completed", result.raw)
+        self.state.message = "UX research completed"
         return result.raw
 
     @listen(ux_research)
-    def scenario_development(self, research_output: str):
+    def scenario_development(self, research_output):
         print("Creating personas")
         result = (
             ScenarioCrew()
             .crew()
             .kickoff(inputs={"research_result": research_output})
         )
-
+        self.state.message += " | Scenario development completed"
         print("Scenario generated", result.raw)
         return result.pydantic()
 
 
 def kickoff():
     ux_flow = UXFlow()
-    ux_flow.kickoff()
+    final_output = ux_flow.kickoff()
+    return final_output
 
 def plot():
     ux_flow = UXFlow()

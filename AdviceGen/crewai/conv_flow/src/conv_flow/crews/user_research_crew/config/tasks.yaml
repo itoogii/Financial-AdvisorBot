@@ -7,7 +7,6 @@ research_investor_task:
   agent: user_researcher
 
 persona_creation_task:
-persona_creation_task:
   description: >
     Use the user research you got and create individual user personas. Make sure the personas have  Name, age, gender, location (in UK or USA), marital status, childrens (yes/no), occupation
     Qualities summarizing their character (Avoid getting too witty, as doing so may taint the persona as being too fun and not a useful tool. Example: friendly, humorous)

@@ -3,48 +3,20 @@ research_investor_task:
     Conduct a thorough research about retail investors in US and UK users.
     Identify and find diverse retail investor information covering a wide range of financial literacy levels, investment goals, and tech comfort levels. Make sure you find demographics, investment behaviors, risk tolerances, emotional triggers, and common pain points encountered of retail investors in the stock market. Ensure the research captures the needs and preferences of age generations in GenZ, Millennials, GenX, and Boomers. Your research findings will be used by persona expert to create realistic and well-defined user personas for the financial advisor application users.
   expected_output: >
-    Comprehensive user research detailing retail investors with demographics, their characteristics, behaviors, concerns and needs. Formatted as markdown without '```'
+    Well structured, comprehensive user research detailing retail investors with demographics, their characteristics, behaviors, concerns and interests. Formatted as markdown without '```'
   agent: user_researcher
-  output_file: research.md
 
-persona_task:
+persona_creation_task:
   description: >
     Use the user research you got and create individual user personas. Make sure the personas have  Name, age, gender, location (in UK or USA), marital status, childrens (yes/no), occupation
     Qualities summarizing their character (Avoid getting too witty, as doing so may taint the persona as being too fun and not a useful tool. Example: friendly, humorous)
     Experience level with investment in stock market, their financial health, their risk tolerance in investing, their prior experience in stock market investment,
     Quotes to sum up the persona's attitude, Lifestyle (work, hobbies), speech style, optionally memory influenced by long and short term personal financial experiences and contains any and all relevant information. Include specific details to make the character more realistic, believable, and memorable. Each piece of information should have a purpose for being included in the persona, and should contribute creating realistic conversation scenarios later.
     Make sure the result is complete and contains all relevant information. Create 100 different users personas. 
-  expected_output: >
-    JSON formatted without '```' user personas with:
-    -	Name
-    - age
-    - gender
-    - location (in UK or USA)
-    - marital status
-    - children (yes/no)
-    - occupation
-    -	Speech style
-    - Extra information (Qualities summarizing their character and persona's attitude. Avoid getting too witty, as doing so may taint the persona as being too fun and not a useful tool. Experience level in the stock market investment. Goals and concerns. Lifestyle. The preference of the investment as such value stock, regular dividend, or growth stock. Optionally, you can include memory that influenced by the user's long and short term personal financial experiences)
-    -	Image prompt to describes the user persona to generate an image later
   agent: persona_creator
+  context: 
+    - research_investor_task
+  expected_output: PersonaList
   output_file: personas.json
 
 
-scenario_task:
-  description: >
-    Using the provided user personas, design engaging conversation scenarios for the user in triggering situations that affects the user personas goals. Each scenario should reflect realistic user interactions based on the characteristics and needs of the personas. Ensure that the scenarios include diverse conditions to cover wide range of user inquiries. Generate 1000 different realistic conversation scenarios. 
-  expected_output: >
-    A collection of detailed conversation scenarios in JSON format without '```', each linked to specific user personas. Each scenario should include:
-    - User persona
-    - User risk tolerance level
-    - User financial literacy level
-    - User investment goal
-    - User experience level in stock market investment
-    - User age
-    - User location
-    - User occupation
-    - Extra information about the user relating to the scenario and optional old conversation memory with the advisor that may influence the conversation
-    - Scenario description
-    - Context and topic to start the conversation with the financial advisor
-  agent: scenario_planner
-  output_file: conversation_scenarios.json

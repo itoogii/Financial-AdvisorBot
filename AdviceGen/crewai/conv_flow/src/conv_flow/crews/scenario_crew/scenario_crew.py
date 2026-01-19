@@ -25,8 +25,8 @@ llm_azure = LLM(
 )
 
 @CrewBase
-class UserResearchCrew():
-    """UserResearchCrew crew"""
+class ScenarioCrew():
+    """ScenarioCrew crew"""
 
     agents: List[BaseAgent]
     tasks: List[Task]
@@ -40,37 +40,38 @@ class UserResearchCrew():
     @agent
     def researcher(self) -> Agent:
         return Agent(
-            config=self.agents_config['user_researcher'], # type: ignore[index]
+            config=self.agents_config['scenario_planner'], # type: ignore[index]
             llm=llm_azure,
             verbose=True
         )
 
     @agent
-    def persona_creator(self) -> Agent:
+    def reporting_analyst(self) -> Agent:
         return Agent(
-            config=self.agents_config['persona_creator'], # type: ignore[index]
+            config=self.agents_config['scenario_reviewer'], # type: ignore[index]
             llm=llm_azure,
+            verbose=True
         )
 
     # To learn more about structured task outputs,
     # task dependencies, and task callbacks, check out the documentation:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     @task
-    def research_task(self) -> Task:
+    def scenario_task(self) -> Task:
         return Task(
-            config=self.tasks_config['research_investor_task'], # type: ignore[index]
+            config=self.tasks_config['scenario_task'], # type: ignore[index]
         )
 
     @task
-    def persona_creation_task(self) -> Task:
+    def scenario_review_task(self) -> Task:
         return Task(
-            config=self.tasks_config['persona_creation_task'], # type: ignore[index]
-            output_file='personas.json'
+            config=self.tasks_config['scenario_review_task'], # type: ignore[index]
+            output_file='scenarios.md'
         )
 
     @crew
     def crew(self) -> Crew:
-        """Creates the UserResearchCrew crew"""
+        """Creates the ScenarioCrew crew"""
         # To learn how to add knowledge sources to your crew, check out the documentation:
         # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
 

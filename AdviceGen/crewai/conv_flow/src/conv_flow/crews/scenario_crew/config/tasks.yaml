@@ -1,0 +1,16 @@
+scenario_task:
+  description: >
+    Using the provided user personas, design engaging conversation scenarios for the user in triggering situations that affects the user personas goals. Each scenario should reflect realistic user interactions based on the characteristics and details of the personas. Ensure that the scenarios include diverse conditions to cover wide range of user inquiries. Generate 1000 different realistic conversation scenarios. 
+  agent: scenario_planner
+  expected_output: ScenarioList
+
+scenario_review_task:
+  description: >
+    Review and refine the designed conversational scenarios to ensure they are diverse, engaging, realistic, and effectively trigger user interactions with the stock investment advisor. Make sure the scenarios accurately reflect realistic user interactions based on the user personas, their specific needs, interests and situations affected by diverse market conditions or events happened in their lives. Correct and enhance the conversation scenarios to ensure they are clear, coherent, and realistic.
+  expected_output: >
+    An improved, polished version of the conversation scenarios that maintains original structure but enhances clarity, accuracy, and consistency. Make sure the output is complete and contains all relevant information. 
+  agent: scenario_reviewer
+  context: 
+    - scenario_task
+  expected_output: ScenarioList
+  output_file: conversation_scenarios.json

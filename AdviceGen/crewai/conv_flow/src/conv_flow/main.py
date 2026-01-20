@@ -1,79 +1,88 @@
 #!/usr/bin/env python
-from random import randint
-
-from pydantic import BaseModel, Field
-from typing import List, Dict, Optional
+from pydantic import BaseModel, ValidationError
+from typing import Optional, List
 from crewai.flow import Flow, listen, start
 
 from conv_flow.crews.user_research_crew.user_research_crew import UserResearchCrew
 from conv_flow.crews.scenario_crew.scenario_crew import ScenarioCrew
 
-# Define models for structured data
-class Persona(BaseModel):
-    username: str = Field(description="username of the persona")
-    full_name: str = Field(description="full name of the persona")
-    age: int = Field(description="age of the persona")
-    occupation: str = Field(description="occupation of the persona")
-    goals: List[str] = Field(description="goals of the persona")
-    challenges: List[str] = Field(description="challenges faced by the persona")
-    gender: str = Field(description="gender of the persona")
-    location: str = Field(description="location of the persona in US or UK")
-    marital_status: str = Field(description="marital status of the persona")
-    interests: List[str] = Field(description="interests and hobbies of the persona")
-    speech_style: str = Field(description="speech style of the persona")
-    financial_background: str = Field(description="financial background of the persona and financial literacy level, experience with investing")
-    attitude: str = Field(description="attitude towards money and investing of the persona")
-    qualities: str = Field(description="personal qualities summarizing their character and persona's attitude. Avoid getting too witty, as doing so may taint the persona as being too fun and not a useful tool")
-    risk_tolerance: str = Field(description="investment risk tolerance level of the persona")
-    extra_info: Optional[Dict[str, str]] = Field(description="any extra useful information about the persona, or memory of past experiences with financial advisors and investing")
-    image_prompt: str = Field(description="prompt to generate an image representing the persona")
+from conv_flow.models import PersonaList, Scenario
 
-class PersonaList(BaseModel):
-    personas: List[Persona] = Field(description="List of user personas")
+import os
 
-class Scenario(BaseModel):
-    persona: Persona = Field(description="Persona used in the scenario")
-    title: str = Field(description="Title of the scenario")
-    introduction: str = Field(description="Introduction to the topic")
-    description: str = Field(description="Detailed description of the scenario")
-    context: List[Persona] = Field(description="Topic context to trigger the discussion with the financial advisor")
-    history: Optional[str] = Field(description="previous conversation history with the financial advisor if any")
-    persona_mood: str = Field(description="current mood of the persona")
-
-class ScenarioList(BaseModel):
-    scenarios: List[Scenario] = Field(description="List of user research scenarios")
-
+# Defined the state to hold the data
 class GenState(BaseModel):
     message: str = ""
+    personas: Optional[PersonaList] = None
+
 
 
 class UXFlow(Flow[GenState]):
+    def __init__(self):
+        super().__init__()
+        # since my flow kickoff was failing in scenario crew, I decided to load existing personas here
+        # in case it exists.
+        print(f"Current working directory: {os.getcwd()}")
+        if os.path.exists("personas.json"):
+            print("Personas file exists")
+            try:
+                with open("personas.json", "r") as file:
+                    self.state.personas = PersonaList.model_validate_json(file.read())
+                    self.state.message += "Research loaded from file."
+            except Exception as e:
+                print(f"Unable the load personas.json: {e}")
+                
+    def record_scenarios(self, scenarios: List[Scenario]):
+        with open("scenarios.json", "a") as file:
+            for scenario in scenarios:
+                file.write(scenario.model_dump_json() + "\n")
 
     @start()
     def ux_research(self):
+        if self.state.personas:
+            print("Personas exist and skipping UX research")
+            self.state.message += " | UX research skipped as it exists"
+            return self.state.personas
         # Run the content crew for this section
         result = UserResearchCrew().crew().kickoff()
-        print("UX research completed", result.raw)
-        self.state.message = "UX research completed"
-        return result.raw
+        self.state.personas = result.pydantic
+        self.state.message = "UX research completed first time"
+        return self.state.personas
 
     @listen(ux_research)
-    def scenario_development(self, research_output):
-        print("Creating personas")
-        result = (
-            ScenarioCrew()
-            .crew()
-            .kickoff(inputs={"research_result": research_output})
-        )
+    def scenario_development(self, ux_output):
+        print("Starting scenario development")
+
+        total_scenarios = 0
+        for i, persona in enumerate(ux_output.personas):
+            # print("The persona is:" + persona)
+            try:
+                print(f"{i}: Working on {persona.full_name} scenarios development")
+                
+                result = ScenarioCrew().crew().kickoff(
+                    inputs={
+                        "user_persona": persona.model_dump_json() # pydantic way to convert to json string
+                    }
+                )
+                total_scenarios += len(result.pydantic.scenarios)
+                self.record_scenarios(result.pydantic.scenarios)
+            except ValidationError as e:
+                print(f"Validation error in {persona.full_name} and {result.pydantic.scenarios}: {e}")
+                continue
+            except Exception as e:
+                print(f"Error occurred in {persona.full_name}: {e}")
+                break
+
+        print(f"Total {total_scenarios} scenarios are generated")
         self.state.message += " | Scenario development completed"
-        print("Scenario generated", result.raw)
-        return result.pydantic()
+        return "Scenario development completed"
+
 
 
 def kickoff():
     ux_flow = UXFlow()
-    final_output = ux_flow.kickoff()
-    return final_output
+    ux_flow.kickoff()
+    # return final_output
 
 def plot():
     ux_flow = UXFlow()

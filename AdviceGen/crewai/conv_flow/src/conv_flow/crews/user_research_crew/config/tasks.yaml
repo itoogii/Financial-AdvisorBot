@@ -5,20 +5,22 @@ research_investor_task:
   expected_output: >
     Well structured, comprehensive and COMPLETE user research detailing retail investors with demographics, their characteristics, behaviors, concerns and interests. Formatted as markdown without '```'
   agent: user_researcher
+  output_file: research_investor.md
 
 persona_creation_task:
   description: >
     Use the research_investor_task output and create individual user personas. Make sure the personas have Name, age, gender, location (in UK or USA), marital status, childrens (yes/no), occupation, qualities summarizing their character (Avoid getting too witty, as doing so may taint the persona as being too fun and not a useful tool Example: friendly, humorous), experience level in stock market investment, their financial health, their investment risk tolerance, their prior experience in stock market investment, quotes to sum up the persona's attitude, lifestyle (work, hobbies), speech style, optional memory that influenced by long and short term personal financial experiences. Make sure the persona scontains all relevant information and include specific details to make the character more realistic, believable, and memorable. Each piece of information should have a purpose for being included in the persona, and should contribute creating realistic conversation scenarios by the design crew later. The next crew will use your output as a full and complete document, and they will not ask you for any missing information later. They will use the user personas to develop the conversational scenarios product design, so make sure your work is thorough and complete.
     CRITICAL REQUIREMENTS:
-    - Create exactly 100 complete, unique user personas
+    - Create exactly 50 complete, unique user personas
     - Each persona must have all required fields filled out completely
-    - Output must be in valid format matching the PersonaList model
+    - Make sure output is in valid JSON format matching the PersonaList model that must be immediately read by PersonaList.model_validate_json() function without errors.
     - Do not expect follow-up requests to complete remaining personas. You are diligent and determined to always perform the highest quality complete work as requested.
-    - Complete the entire list of 100 personas in single output
+    - Complete the entire list of 50 personas in single output
   agent: persona_creator
   context: 
     - research_investor_task
-  expected_output: PersonaList
-  output_file: personas.md
+  expected_output: >
+    JSON object containing a list of 50 complete user personas matching the PersonaList pydantic model.
+  output_file: personas.json
 
 

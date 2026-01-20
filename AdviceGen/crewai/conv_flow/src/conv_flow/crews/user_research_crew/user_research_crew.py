@@ -4,6 +4,8 @@ from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
 from dotenv import load_dotenv
 import os
+from conv_flow.models import PersonaList
+
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
@@ -12,16 +14,17 @@ import os
 llm_ollama = LLM(model="ollama/phi3:medium", base_url="http://localhost:11434")
 
 load_dotenv()
-model = "azure/gpt-5.1-chat"
+model = "azure/gpt-4.1"
 api_url = os.environ.get("AZURE_API_BASE")
 api_key = os.environ.get("AZURE_API_KEY")
 api_version = os.environ.get("AZURE_API_VERSION")
 
 llm_azure = LLM(
-    model="azure/gpt-5.1-chat",
+    model=model,
     endpoint=api_url,
     api_key=api_key,
     api_version=api_version,
+    max_tokens=32000
 )
 
 @CrewBase
@@ -66,7 +69,7 @@ class UserResearchCrew:
     def persona_creation_task(self) -> Task:
         return Task(
             config=self.tasks_config['persona_creation_task'], # type: ignore[index]
-            output_file='personas.json'
+            output_pydantic=PersonaList
         )
 
     @crew

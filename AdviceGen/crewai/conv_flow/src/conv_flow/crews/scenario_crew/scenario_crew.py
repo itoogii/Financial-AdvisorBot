@@ -4,6 +4,9 @@ from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
 from dotenv import load_dotenv
 import os
+
+from conv_flow.models import ScenarioList
+
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
@@ -12,16 +15,17 @@ import os
 llm_ollama = LLM(model="ollama/phi3:medium", base_url="http://localhost:11434")
 
 load_dotenv()
-model = "azure/gpt-5.1-chat"
+model = "azure/gpt-4.1"
 api_url = os.environ.get("AZURE_API_BASE")
 api_key = os.environ.get("AZURE_API_KEY")
 api_version = os.environ.get("AZURE_API_VERSION")
 
 llm_azure = LLM(
-    model="azure/gpt-5.1-chat",
+    model=model,
     endpoint=api_url,
     api_key=api_key,
     api_version=api_version,
+    max_tokens=32000
 )
 
 @CrewBase
@@ -38,17 +42,17 @@ class ScenarioCrew():
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
     @agent
-    def scenario_planner(self) -> Agent:
+    def content_designer(self) -> Agent:
         return Agent(
-            config=self.agents_config['scenario_planner'], # type: ignore[index]
+            config=self.agents_config['content_designer'], # type: ignore[index]
             llm=llm_azure,
             verbose=True
         )
 
     @agent
-    def scenario_reviewer(self) -> Agent:
+    def content_specialist(self) -> Agent:
         return Agent(
-            config=self.agents_config['scenario_reviewer'], # type: ignore[index]
+            config=self.agents_config['content_specialist'], # type: ignore[index]
             llm=llm_azure,
             verbose=True
         )
@@ -60,13 +64,14 @@ class ScenarioCrew():
     def scenario_task(self) -> Task:
         return Task(
             config=self.tasks_config['scenario_task'], # type: ignore[index]
+            output_pydantic=ScenarioList
         )
 
     @task
     def scenario_review_task(self) -> Task:
         return Task(
             config=self.tasks_config['scenario_review_task'], # type: ignore[index]
-            output_file='scenarios.md'
+            output_pydantic=ScenarioList
         )
 
     @crew

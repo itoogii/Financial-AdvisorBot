@@ -5,7 +5,7 @@ from typing import List
 from dotenv import load_dotenv
 import os
 
-from conv_flow.models import ScenarioList
+from conv_flow.models import UserScenarios
 
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
@@ -25,11 +25,12 @@ llm_azure = LLM(
     endpoint=api_url,
     api_key=api_key,
     api_version=api_version,
-    max_tokens=32000
+    max_tokens=32000,
 )
 
+
 @CrewBase
-class ScenarioCrew():
+class ScenarioCrew:
     """ScenarioCrew crew"""
 
     agents: List[BaseAgent]
@@ -38,23 +39,23 @@ class ScenarioCrew():
     # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
     # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
-    
+
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
     @agent
     def content_designer(self) -> Agent:
         return Agent(
-            config=self.agents_config['content_designer'], # type: ignore[index]
+            config=self.agents_config["content_designer"],  # type: ignore[index]
             llm=llm_azure,
-            verbose=True
+            verbose=True,
         )
 
     @agent
     def content_specialist(self) -> Agent:
         return Agent(
-            config=self.agents_config['content_specialist'], # type: ignore[index]
+            config=self.agents_config["content_specialist"],  # type: ignore[index]
             llm=llm_azure,
-            verbose=True
+            verbose=True,
         )
 
     # To learn more about structured task outputs,
@@ -63,15 +64,15 @@ class ScenarioCrew():
     @task
     def scenario_task(self) -> Task:
         return Task(
-            config=self.tasks_config['scenario_task'], # type: ignore[index]
-            output_pydantic=ScenarioList
+            config=self.tasks_config["scenario_task"],  # type: ignore[index]
+            output_pydantic=UserScenarios,
         )
 
     @task
     def scenario_review_task(self) -> Task:
         return Task(
-            config=self.tasks_config['scenario_review_task'], # type: ignore[index]
-            output_pydantic=ScenarioList
+            config=self.tasks_config["scenario_review_task"],  # type: ignore[index]
+            output_pydantic=UserScenarios,
         )
 
     @crew
@@ -81,8 +82,8 @@ class ScenarioCrew():
         # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
 
         return Crew(
-            agents=self.agents, # Automatically created by the @agent decorator
-            tasks=self.tasks, # Automatically created by the @task decorator
+            agents=self.agents,  # Automatically created by the @agent decorator
+            tasks=self.tasks,  # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=True,
             # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/

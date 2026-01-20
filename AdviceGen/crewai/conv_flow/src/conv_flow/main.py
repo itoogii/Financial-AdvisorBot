@@ -6,15 +6,15 @@ from crewai.flow import Flow, listen, start
 from conv_flow.crews.user_research_crew.user_research_crew import UserResearchCrew
 from conv_flow.crews.scenario_crew.scenario_crew import ScenarioCrew
 
-from conv_flow.models import PersonaList, Scenario
+from conv_flow.models import PersonaList, UserScenarios
 
 import os
+
 
 # Defined the state to hold the data
 class GenState(BaseModel):
     message: str = ""
     personas: Optional[PersonaList] = None
-
 
 
 class UXFlow(Flow[GenState]):
@@ -31,11 +31,10 @@ class UXFlow(Flow[GenState]):
                     self.state.message += "Research loaded from file."
             except Exception as e:
                 print(f"Unable the load personas.json: {e}")
-                
-    def record_scenarios(self, scenarios: List[Scenario]):
+
+    def record_scenarios(self, scenarios: UserScenarios):
         with open("scenarios.json", "a") as file:
-            for scenario in scenarios:
-                file.write(scenario.model_dump_json() + "\n")
+            file.write(scenarios.model_dump_json())
 
     @start()
     def ux_research(self):
@@ -58,16 +57,25 @@ class UXFlow(Flow[GenState]):
             # print("The persona is:" + persona)
             try:
                 print(f"{i}: Working on {persona.full_name} scenarios development")
-                
-                result = ScenarioCrew().crew().kickoff(
-                    inputs={
-                        "user_persona": persona.model_dump_json() # pydantic way to convert to json string
-                    }
+
+                result = (
+                    ScenarioCrew()
+                    .crew()
+                    .kickoff(
+                        inputs={
+                            "user_persona": persona.model_dump_json()  # pydantic way to convert to json string
+                        }
+                    )
+                )
+                scenario_entry = UserScenarios(
+                    user=persona, scenarios=result.pydantic.scenarios
                 )
                 total_scenarios += len(result.pydantic.scenarios)
-                self.record_scenarios(result.pydantic.scenarios)
+                self.record_scenarios(scenario_entry)
             except ValidationError as e:
-                print(f"Validation error in {persona.full_name} and {result.pydantic.scenarios}: {e}")
+                print(
+                    f"Validation error in {persona.full_name} and {result.pydantic.scenarios}: {e}"
+                )
                 continue
             except Exception as e:
                 print(f"Error occurred in {persona.full_name}: {e}")
@@ -78,11 +86,11 @@ class UXFlow(Flow[GenState]):
         return "Scenario development completed"
 
 
-
 def kickoff():
     ux_flow = UXFlow()
     ux_flow.kickoff()
     # return final_output
+
 
 def plot():
     ux_flow = UXFlow()
@@ -98,7 +106,9 @@ def run_with_trigger():
 
     # Get trigger payload from command line argument
     if len(sys.argv) < 2:
-        raise Exception("No trigger payload provided. Please provide JSON payload as argument.")
+        raise Exception(
+            "No trigger payload provided. Please provide JSON payload as argument."
+        )
 
     try:
         trigger_payload = json.loads(sys.argv[1])

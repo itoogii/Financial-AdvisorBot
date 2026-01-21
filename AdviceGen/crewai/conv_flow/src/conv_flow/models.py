@@ -40,16 +40,15 @@ class PersonaList(BaseModel):
 
 
 class Scenario(BaseModel):
-    title: str = Field(description="Title of the scenario")
-    introduction: str = Field(description="Introduction to the topic")
-    description: str = Field(description="Detailed description of the scenario")
-    context: List[Persona] = Field(
-        description="Topic context to trigger the discussion with the financial advisor"
+    title: str = Field(description="Unique short title for the scenario")
+    description: str = Field(description="Detailed narrative of the scenario context")
+    trigger_event: str = Field(
+        description="Specific event that influenced or prompted the user to talk to the financial advisor"
     )
     history: Optional[str] = Field(
         description="previous conversation history with the financial advisor if any"
     )
-    persona_mood: str = Field(description="current mood of the persona")
+    persona_mood: str = Field(description="current mood of the user persona")
 
 
 class UserScenarios(BaseModel):

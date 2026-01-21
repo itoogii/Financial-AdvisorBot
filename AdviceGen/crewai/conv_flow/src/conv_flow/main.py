@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import json
+import time
 from pydantic import BaseModel, ValidationError
 from typing import Optional, List
 from crewai.flow import Flow, listen, start
@@ -30,11 +32,25 @@ class UXFlow(Flow[GenState]):
                     self.state.personas = PersonaList.model_validate_json(file.read())
                     self.state.message += "Research loaded from file."
             except Exception as e:
-                print(f"Unable the load personas.json: {e}")
+                print(f"Unable to load personas.json: {e}")
 
     def record_scenarios(self, scenarios: UserScenarios):
-        with open("scenarios.json", "a") as file:
-            file.write(scenarios.model_dump_json())
+        if os.path.exists("scenarios.json"):
+            try:
+                with open("scenarios.json", "r") as file:
+                    existing_scenarios = json.load(file)
+            except Exception as e:
+                print(f"Unable to load scenarios.json: {e}")
+                existing_scenarios = []
+        else:
+            existing_scenarios = []
+        
+        # Appending new scenario
+        existing_scenarios.append(scenarios.model_dump())
+        
+        # Writing new scenarios to the scenarios file
+        with open("scenarios.json", "w") as file:
+            json.dump(existing_scenarios, file, indent=4)
 
     @start()
     def ux_research(self):
@@ -72,6 +88,7 @@ class UXFlow(Flow[GenState]):
                 )
                 total_scenarios += len(result.pydantic.scenarios)
                 self.record_scenarios(scenario_entry)
+                # time.sleep(5) # DeepSeek on Azure has 20 request per minute rate limit. I assume 5 seconds delay is enough.
             except ValidationError as e:
                 print(
                     f"Validation error in {persona.full_name} and {result.pydantic.scenarios}: {e}"

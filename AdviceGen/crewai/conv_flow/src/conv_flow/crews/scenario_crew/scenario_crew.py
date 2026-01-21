@@ -15,17 +15,19 @@ from conv_flow.models import UserScenarios
 llm_ollama = LLM(model="ollama/phi3:medium", base_url="http://localhost:11434")
 
 load_dotenv()
-model = "azure/gpt-4.1"
-api_url = os.environ.get("AZURE_API_BASE")
+model = os.environ.get("AZURE_MODEL_NAME", "azure/gpt-4.1")
+api_url = os.environ.get("AZURE_ENDPOINT")
 api_key = os.environ.get("AZURE_API_KEY")
 api_version = os.environ.get("AZURE_API_VERSION")
 
 llm_azure = LLM(
     model=model,
-    endpoint=api_url,
+    base_url=api_url,
     api_key=api_key,
     api_version=api_version,
     max_tokens=32000,
+    retry_strategy="exponential_backoff",
+    timeout=40
 )
 
 

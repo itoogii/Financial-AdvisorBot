@@ -25,9 +25,7 @@ llm_azure = LLM(
     base_url=api_url,
     api_key=api_key,
     api_version=api_version,
-    max_tokens=32000,
-    retry_strategy="exponential_backoff",
-    timeout=40
+    max_tokens=32000
 )
 
 

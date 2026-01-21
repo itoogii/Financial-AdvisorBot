@@ -4,12 +4,13 @@ The project CM3070 - Financial advisor bot.
 
 ## Directory Structure
 
-- AdviceGen
+- synthetic-data-generation (renamed from "AdviceGen" on Jan 20, 2026)
   - crewai: CrewAI Agentic Synthetic data generation
-    * consultgen: The CrewAI crews test to generate synthetic data. 
+    * consultgen: The CrewAI crews test to generate synthetic data. (deprecated)
     * conv-flow: The CrewAI Flows to control the synthetic data generation 
     * crewai-book: The jupyter notebooks to evaluate the CrewAI. 
-  - Experimentation: Evaluate LLM services in python
+  - experimentation: Evaluate LLM services in python
+  - ms-agent-fw: Microsoft Agent Framework
 
 - ReinforcementL: Reinforcement Learning setup
 

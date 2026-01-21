@@ -1,6 +1,15 @@
-# {{crew_name}} Crew
+# Synthetic dataset generation
 
-Welcome to the {{crew_name}} Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
+In this CrewAI Flows project I added 2 crews to work to generate the user personas and conversation scenarios. 
+Each crew has two members. The first crew will generate the user personas in given Pydantic model, and using these user personas the second crew will generate the conversation scenarios with financial advisor. 
+
+## Synthetic files
+
+My crews generated the personas.json file for user personas, and scenarios.json file for conversation scenarios for the personas. Both files are located in this base project directory.
+I also tasked the first crew to save the user research document in "research_investor.md". I hope you will find them useful. 
+
+
+**See Below for CrewAI Instruction** &#x1F447; (provided by CrewAI template)
 
 ## Installation
 

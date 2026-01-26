@@ -17,3 +17,7 @@ The project CM3070 - Financial advisor bot.
 - Front-End: Web application interface
 
 - Backend: 
+
+### Model selection
+Llama3 and Gemma3 license restricts the engagement in unlicensed financial practice.
+Owen3 suits my financial advisor application. 

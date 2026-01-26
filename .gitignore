@@ -8,3 +8,9 @@ development.code-workspace
 # Python
 __pycache__/
 .venv/
+
+# Model training outputs
+lora*
+checkpoints/
+unsloth*
+model*

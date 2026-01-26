@@ -58,3 +58,9 @@ python ./1.1_multi_turn_chat_stream.py
 ## Dev
 I use pydantic [Dotenv support](https://docs.pydantic.dev/latest/concepts/pydantic_settings/#dotenv-env-support) to use the environment variables from the .env file. 
 
+## Qwen fine-tuning
+I downloaded the Unsloth notebook and ran it locally. 
+```shell
+uv pip install unsloth
+```
+

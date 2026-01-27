@@ -65,19 +65,19 @@ def smart_selector(state: GroupChatState) -> str:
 
     last_message = conversation[-1] if conversation else None
 
-    # If no messages yet, start with SimulatedUser
+    # If no messages yet, start with Customer
     if not last_message:
-        return "SimulatedUser"
+        return "Customer"
 
     # Check last message content
     last_text = last_message.text.lower()
 
-    # after SimulatedUser responded, switch to FinancialAdvisor
-    if "I have finished" in last_text and last_message.author_name == "SimulatedUser":
+    # after Customer responded, switch to FinancialAdvisor
+    if "I have finished" in last_text and last_message.author_name == "Customer":
         return "FinancialAdvisor"
 
     # Else continue with researcher until it indicates completion
-    return "SimulatedUser"
+    return "Customer"
 
 def round_robin_selector(state: GroupChatState) -> str:
     """A round-robin selector function that picks the next speaker based on the current round index."""
@@ -90,36 +90,36 @@ async def main():
    
     user_scenarios = load_scenarios("scenarios.json")
     final_dataset = []
-    max_turns = 6 # Maximun conversation turns per scenario
+    max_turns = 11 # Maximun conversation turns - should be odd number to end with advisor, it would be rude if advisor stops abruptly all the time
      # Create orchestrator agent for speaker selection
     # agent_factory, close = await create_azure_ai_agent()
 
         
-    for entry in [user_scenarios[0]]:  # Limit to first persona for testing
-        for topic in [entry.scenarios[0]]: 
+    for entry in [user_scenarios[1]]:  # Limit to first persona for testing
+        for topic in [entry.scenarios[0],entry.scenarios[1]]: # I could do [0:2], but just explicitly listing for clarity
             persona = entry.user
             print("=" * 80)
             print(f"{persona.full_name} to discuss {topic.title}")
             agent_factory, close = await create_azure_ai_agent()
             try:
                 user = await agent_factory(
-                        name="SimulatedUser",
-                        instructions=f"""You are {persona.full_name}, a person with this persona: {persona}.
-                        As a human you talk realistically with financial advisor in a conversational manner.
-                        You don't ask all your questions at once, instead you make conversation as a real person and wait for the advisor's response before continuing the conversation.
-                        You may provide additional information about your situation as needed and you may ask follow-up questions based on the advisor's responses.
-                        Your goal is to get financial advice until you are satisfied with the information provided and think you have enough.
+                        name="Customer",
+                        instructions=f"""You are {persona.full_name} and your persona is: {persona}.
+                        You are a Customer who is seeking advice from a financial advisor in a conversational manner. Use your own speech style and behavior that matches your persona when talking to the professional advisor who you believe can help you with your financial investment questions.
+                        You start a conversation as your persona and wait for the advisor's response before continuing the dialogue.
+                        You may provide additional information about your situation as needed. You may ask follow-up questions based on the advisor's responses.
+                        Your goal is to get financial advice for your current situation until you are satisfied with the information provided and think you have enough.
                         When you are done and you don't have any more questions, respond by indicating to end the conversation.""",
                         )
                 
                 advisor = await agent_factory(
                         name="FinancialAdvisor",
                         instructions=(
-                            f"""You are a senior financial advisor in stock investment. As an advisor you talk realistically with your user in a conversational manner. You answer user questions, and provide meaningful and thoughtful financial advice. You ensure effectively address user needs and provide valuable financial advice in stock investment.
+                            f"""You are a senior financial advisor named Hermes. As an advisor you talk realistically with your user in a conversational manner. You answer user questions, and provide meaningful and thoughtful financial advice. You ensure effectively address user needs and provide valuable financial advice in stock investment.
                             Currently, you are engaging with user named {persona.full_name} who is {persona.age} years old and works as a {persona.occupation} in {persona.location}.  
                             If you are unsure about a user's request, ask for more information rather than making assumptions. 
                             If the content is inappropriate or harmful, politely refuse to answer and redirect the conversation to financial topics. 
-                            - You don't need to address the user by name in every turn and it will make the conversation more natural. Don't use slang or overly casual language. Be professional yet approachable.
+                            - You don't need to address the user by name in every turn and it will make the conversation more natural. 
                             - You can ask questions, provide clarifications, and offer suggestions to guide the conversation in respective tone.
                             - Never sound artificial or robotic.
                             - You cannot express promise such as 'I will do that' or 'I promise the stock will perform well'.
@@ -127,9 +127,9 @@ async def main():
                             - Avoid jargon and technical terms unless the user demonstrates understanding.
                             - Provide balanced advice considering both short-term and long-term financial goals.
                             - If the user provides extra information, incorporate it into your advice appropriately.
-                            - Ensure ethical standards in all responses.
+                            - Ensure ethical standards in all responses. Don't use slang or overly casual language. Be professional yet approachable.
                             - Ensure all advice provided adheres to legal and ethical standards of either US or UK based on users' respective locations
-                            IMPORTANT: When the user indicates they are done (e.g., says goodbye, thank you, no more questions), 
+                            IMPORTANT: When the user indicates they are done (e.g., says goodbye, thank you, no more questions), respond with a concise closing statement and end the conversation 
                             """
                         ),
                     )  
@@ -139,14 +139,14 @@ async def main():
                     # Set a hard termination condition: stop after 7 assistant messages
                     # The agent orchestrator will intelligently decide when to end before this limit but just in case
                     .participants([user, advisor])
-                    .with_termination_condition(lambda conversation: len(conversation) >= 7)
+                    .with_termination_condition(lambda conversation: len(conversation) >= max_turns)
                     .build()
                 )
 
                 task = (
-                    f"{topic.description}. '{topic.trigger_event}' triggered the SimulatedUser to seek advice. "
-                    f"{'SimulatedUser remembers ' + topic.history if topic.history else ''} "
-                    f"SimulatedUser is feeling {topic.persona_mood}. SimulatedUser engages a discussion with financial advisor on {topic.title}. SimulatedUser starts the conversation..."
+                    f"""{topic.description}. '{topic.trigger_event}' triggered the Customer to seek advice. 
+                    {'Customer remembers ' + topic.history if topic.history else ''} 
+                    Customer is feeling {topic.persona_mood}. Customer starts the conversation for {topic.title}"""
                 )
                 
                 final_conversation: list[ChatMessage] = []
@@ -181,7 +181,7 @@ async def main():
                 
                 formatted_dialogue = []
                 for msg in final_conversation:
-                    if msg.author_name == "SimulatedUser":
+                    if msg.author_name == "Customer":
                         formatted_dialogue.append({"role": "user", "content": msg.text})
                     elif msg.author_name == "FinancialAdvisor":
                         formatted_dialogue.append({"role": "assistant", "content": msg.text})

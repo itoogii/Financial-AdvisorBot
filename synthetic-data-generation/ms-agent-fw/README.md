@@ -8,3 +8,8 @@ For quick summary (installed as in dev mode):
 ```shell
 pip install agent-framework --pre
 ```
+
+- I also installed the Unsloth to verify that if the synthetic dataset I generated with OpenAI's ChatML format works. 
+```shell
+uv pip install unsloth datasets transformers
+```

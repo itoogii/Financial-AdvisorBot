@@ -1,6 +1,7 @@
 # ---------------------------------------
 # Document for multi-turn agent:
 # https://learn.microsoft.com/en-us/agent-framework/tutorials/agents/multi-turn-conversation?pivots=programming-language-python 
+# Used the all available information from MAF documentation and tutorials to build this script.
 # ---------------------------------------
 import asyncio
 from typing import Annotated, Any, cast
@@ -11,12 +12,10 @@ from contextlib import AsyncExitStack
 
 from pydantic import Field
 from models import UserScenarios
-from agent_framework.ollama import OllamaChatClient 
+
 # from agent_framework.openai import OpenAIChatClient
 from agent_framework import (
     ChatMessage,
-    ChatAgent,
-    Role,
     ai_function,
     GroupChatBuilder, 
     GroupChatState,
@@ -79,52 +78,43 @@ def smart_selector(state: GroupChatState) -> str:
     # Else continue with researcher until it indicates completion
     return "Customer"
 
+def round_robin_selector(state: GroupChatState) -> str:
+    """A round-robin selector function that picks the next speaker based on the current round index."""
+    participant_names = list(state.participants.keys())
+    speaker = participant_names[state.current_round % len(participant_names)]
+    print(f"[Selector] Round {state.current_round}: selected speaker is {speaker}")
+    return speaker
+
 async def main():
    
     user_scenarios = load_scenarios("scenarios.json")
     final_dataset = []
-    max_turns = 9 # Maximun conversation turns per scenario
+    max_turns = 11 # Maximun conversation turns - should be odd number to end with advisor, it would be rude if advisor stops abruptly all the time
      # Create orchestrator agent for speaker selection
     # agent_factory, close = await create_azure_ai_agent()
-    async with AzureCliCredential() as credential:
-        chat_client = AzureAIClient(credential=credential, endpoint=os.getenv("AZURE_AI_PROJECT_ENDPOINT"))
-        orchestrator_agent = ChatAgent(
-            name="Orchestrator",
-            description="Coordinate the conversation between User and Financial Advisor",
-            instructions="""
-            You coordinate a conversation between user and financial advisor in multi-turn chat conversation.
-            User is represented by Customer and the financial advisor is represented by FinancialAdvisor.
-            Your task is to make sure Customer starts the conversation and ask questions related to their financial scenarios, and FinancialAdvisor responds with advice or clarifying questions.
 
-            Guidelines:
-            - The given input is the topic that Customer wants to discuss with FinancialAdvisor.
-            - Customer must start the conversation. Customer asks questions related to their financial scenario
-            - Every time after Customer's turn, have FinancialAdvisor respond with advice or clarifying questions back to the Customer
-            - Every time after FinancialAdvisor's turn, have Customer reply with follow-up questions, additional info, or indicate to end the conversation
-            - Continue this pattern until the conversation is complete or Customer indicates the conversation is done""",
-            chat_client=chat_client,
-        )
-        for entry in [user_scenarios[0]]:  # Limit to first persona for testing
-            for topic in [entry.scenarios[0]]: 
-                persona = entry.user
-                print(f"{persona.full_name} wants to discuss {topic.title}")
-                agent_factory, close = await create_azure_ai_agent()
-                try:
-                    user = await agent_factory(
-                            name="Customer",
-                            instructions=f"""You are {persona.full_name} and your persona is: {persona}.
+        
+    for entry in [user_scenarios[1]]:  # Limit to first persona for testing
+        for topic in [entry.scenarios[0],entry.scenarios[1]]: # I could do [0:2], but just explicitly listing for clarity
+            persona = entry.user
+            print("=" * 80)
+            print(f"{persona.full_name} to discuss {topic.title}")
+            agent_factory, close = await create_azure_ai_agent()
+            try:
+                user = await agent_factory(
+                        name="Customer",
+                        instructions=f"""You are {persona.full_name} and your persona is: {persona}.
                         You are a Customer who is seeking advice from a financial advisor in a conversational manner. Use your own speech style and behavior that matches your persona when talking to the professional advisor who you believe can help you with your financial investment questions.
                         You start a conversation as your persona and wait for the advisor's response before continuing the dialogue.
                         You may provide additional information about your situation as needed. You may ask follow-up questions based on the advisor's responses.
                         Your goal is to get financial advice for your current situation until you are satisfied with the information provided and think you have enough.
-                        Try to finish the conversation within {max_turns} turns.
                         When you are done and you don't have any more questions, respond by indicating to end the conversation.""",
-                            )
-                    
-                    advisor = await agent_factory(
-                            name="FinancialAdvisor",
-                            instructions=(
-                                f"""You are a senior financial advisor named Hermes. As an advisor you talk realistically with your user in a conversational manner. You answer user questions, and provide meaningful and thoughtful financial advice. You ensure effectively address user needs and provide valuable financial advice in stock investment.
+                        )
+                
+                advisor = await agent_factory(
+                        name="FinancialAdvisor",
+                        instructions=(
+                            f"""You are a senior financial advisor named Hermes. As an advisor you talk realistically with your user in a conversational manner. You answer user questions, and provide meaningful and thoughtful financial advice. You ensure effectively address user needs and provide valuable financial advice in stock investment.
                             Currently, you are engaging with user named {persona.full_name} who is {persona.age} years old and works as a {persona.occupation} in {persona.location}.  
                             If you are unsure about a user's request, ask for more information rather than making assumptions. 
                             If the content is inappropriate or harmful, politely refuse to answer and redirect the conversation to financial topics. 
@@ -140,65 +130,66 @@ async def main():
                             - Ensure all advice provided adheres to legal and ethical standards of either US or UK based on users' respective locations
                             IMPORTANT: When the user indicates they are done (e.g., says goodbye, thank you, no more questions), respond with a concise closing statement and end the conversation 
                             """
-                            ),
-                        )  
-                    
-                    workflow = (GroupChatBuilder()
-                        .with_agent_orchestrator(orchestrator_agent)
-                        # Set a hard termination condition: stop after 6 assistant messages
-                        # The agent orchestrator will intelligently decide when to end before this limit but just in case
-                        .participants([user, advisor])
-                        .build()
-                    )
+                        ),
+                    )  
+                
+                workflow = (GroupChatBuilder()
+                    .with_select_speaker_func(round_robin_selector)
+                    # Set a hard termination condition: stop after 7 assistant messages
+                    # The agent orchestrator will intelligently decide when to end before this limit but just in case
+                    .participants([user, advisor])
+                    .with_termination_condition(lambda conversation: len(conversation) >= max_turns)
+                    .build()
+                )
 
-                    task = (
-                        f"""{topic.description}. '{topic.trigger_event}' triggered the Customer to seek advice. 
+                task = (
+                    f"""{topic.description}. '{topic.trigger_event}' triggered the Customer to seek advice. 
                     {'Customer remembers ' + topic.history if topic.history else ''} 
                     Customer is feeling {topic.persona_mood}. Customer starts the conversation for {topic.title}"""
-                    )
-                    
-                    final_conversation: list[ChatMessage] = []
-                    last_executor_id: str | None = None
+                )
+                
+                final_conversation: list[ChatMessage] = []
+                last_executor_id: str | None = None
 
-                    # Run the workflow
-                    async for event in workflow.run_stream(task):
-                        if isinstance(event, AgentResponseUpdate):
-                            # Print streaming agent updates
-                            eid = event.executor_id
-                            if eid != last_executor_id:
-                                if last_executor_id is not None:
-                                    print()
-                                print(f"[{eid}]:", end=" ", flush=True)
-                                last_executor_id = eid
-                            print(event.data, end="", flush=True)
-                        elif isinstance(event, WorkflowOutputEvent):
-                            # Workflow completed - data is a list of ChatMessage
-                            final_conversation = cast(list[ChatMessage], event.data)
-                    # print(f"\nFinal conversation: {dir(final_conversation[0])}\n")
-                    # print(f"\n{final_conversation[0].author_name}: {final_conversation[0].text}\n")
-                    # print(f"\n{final_conversation[1].author_name}: {final_conversation[1].text}\n")
-                    # print(f"\n{final_conversation[2].author_name}: {final_conversation[2].text}\n")
-                    if final_conversation:
-                        print("\n\n" + "=" * 80)
-                        print("Final Conversation:")
-                        for msg in final_conversation:
-                            author = getattr(msg, "author_name", "Unknown")
-                            text = getattr(msg, "text", str(msg))
-                            print(f"\n[{author}]\n{text}")
-                            print("-" * 80)
-                    
-                    formatted_dialogue = []
+                # Run the workflow
+                async for event in workflow.run_stream(task):
+                    if isinstance(event, AgentResponseUpdate):
+                        # Print streaming agent updates
+                        eid = event.executor_id
+                        if eid != last_executor_id:
+                            if last_executor_id is not None:
+                                print()
+                            print(f"[{eid}]:", end=" ", flush=True)
+                            last_executor_id = eid
+                        print(event.data, end="", flush=True)
+                    elif isinstance(event, WorkflowOutputEvent):
+                        # Workflow completed - data is a list of ChatMessage
+                        final_conversation = cast(list[ChatMessage], event.data)
+                # print(f"\nFinal conversation: {dir(final_conversation[0])}\n")
+                # print(f"\n{final_conversation[0].author_name}: {final_conversation[0].text}\n")
+                # print(f"\n{final_conversation[1].author_name}: {final_conversation[1].text}\n")
+                # print(f"\n{final_conversation[2].author_name}: {final_conversation[2].text}\n")
+                if final_conversation:
+                    print("\n\n" + "=" * 80)
+                    print("Final Conversation:")
                     for msg in final_conversation:
-                        if msg.author_name == "Customer":
-                            formatted_dialogue.append({"role": "user", "content": msg.text})
-                        elif msg.author_name == "FinancialAdvisor":
-                            formatted_dialogue.append({"role": "assistant", "content": msg.text})
-                    
-                    if formatted_dialogue:
-                        final_dataset.append({"messages": formatted_dialogue})
-                finally:
-                    await close()
-                    # pass
+                        author = getattr(msg, "author_name", "Unknown")
+                        text = getattr(msg, "text", str(msg))
+                        print(f"\n[{author}]\n{text}")
+                        print("-" * 80)
+                
+                formatted_dialogue = []
+                for msg in final_conversation:
+                    if msg.author_name == "Customer":
+                        formatted_dialogue.append({"role": "user", "content": msg.text})
+                    elif msg.author_name == "FinancialAdvisor":
+                        formatted_dialogue.append({"role": "assistant", "content": msg.text})
+                
+                if formatted_dialogue:
+                    final_dataset.append({"messages": formatted_dialogue})
+            finally:
+                await close()
+                # pass
                 
     with open("synthetic_financial_dialogue.jsonl", "w") as f:
         for entry in final_dataset:

@@ -4,6 +4,7 @@
 # Used the all available information from MAF documentation and tutorials to build this script.
 # ---------------------------------------
 import asyncio
+from datetime import time
 from typing import Annotated, Any, cast
 import os
 import json
@@ -83,23 +84,20 @@ async def main():
    
     user_scenarios = load_scenarios("scenarios.json")
     max_turns = 11 # Maximun conversation turns - should be odd number to end with advisor, it would be rude if advisor stops abruptly all the time
-     # Create orchestrator agent for speaker selection
+    # Create orchestrator agent for speaker selection
     # agent_factory, close = await create_azure_ai_agent()
-
-        
-    for entry in user_scenarios: 
-        for topic in entry.scenarios: 
-            persona = entry.user
-            print("=" * 80)
-            print(f"{persona.full_name} to discuss {topic.title}")
+    for entry in user_scenarios[9:]: # I partially completed earlier and added the 1.5s sleep to fix rate limit errors
+        persona = entry.user
+        for topic in entry.scenarios:
+            start = time.time()
             agent_factory, close = await create_azure_ai_agent()
             try:
                 user = await agent_factory(
                         name="Customer",
-                        instructions=f"""You are {persona.full_name}. You have personality, speech style and behavior that matches your persona: {persona}.
+                        instructions=f"""You are {persona.full_name}. Your personality, speech style and persona is defined as: {persona}. Be sure to embody this persona in your responses.
                         As a customer, you are seeking advice from the financial advisor in a conversational manner for the scenario and situation you are currently facing.
-                        As a customer, you start a conversation with the advisor, and wait for the advisor's response before continuing the conversation.
-                        You may provide additional information about your situation as needed. You may ask follow-up questions based on the advisor's responses.
+                        You start a conversation with the advisor. You may begin with a greeting based on your personality and mood, otherwise you may start with your first question. Wait for the advisor's response before continuing the conversation. You don't need to be overly wordy, just be natural and realistic.
+                        You may provide additional information about your situation if needed. You may ask follow-up questions based on the advisor's responses.
                         Your goal is to get financial advice for your current situation until you are satisfied with the information provided and think you have enough.
                         Aim to finish the conversation within {max_turns} turns.
                         When you are done and you don't have any more questions, respond by indicating to end the conversation.""",
@@ -108,13 +106,13 @@ async def main():
                 advisor = await agent_factory(
                         name="FinancialAdvisor",
                         instructions=(
-                            f"""You are a senior financial advisor named Hermes. As an advisor you talk realistically with your user in a conversational manner. You answer user questions, and provide meaningful and thoughtful financial advice. You ensure effectively address user needs and provide valuable financial advice in stock investment.
-                            Currently, you are engaging with user named {persona.full_name} who is {persona.age} years old and works as a {persona.occupation} in {persona.location}.  
-                            If you are unsure about a user's request, ask for more information rather than making assumptions. 
+                            f"""You are financial advisor named Hermes. You are expert in providing meaningful and thoughtful financial advice in stock investment.
+                            Currently, you are engaging with user named {persona.full_name} who is {persona.age} years old and works as a {persona.occupation} in {persona.location} in a conversation.  
+                            If you are unsure about a user's request, ask for clarifications rather than making assumptions. 
                             If the content is inappropriate or harmful, politely refuse to answer and redirect the conversation to financial topics. 
                             - You don't need to address the user by name in every turn and it will make the conversation more natural. 
                             - You can ask questions, provide clarifications, and offer suggestions to guide the conversation in respective tone.
-                            - Never sound artificial or robotic.
+                            - Never sound artificial or robotic. Be realistic and natural in your responses.
                             - You cannot express promise such as 'I will do that' or 'I promise the stock will perform well'.
                             - ALWAYS prioritize safety: remind the user about investment risks and uncertainties when providing advice.
                             - Avoid jargon and technical terms unless the user demonstrates understanding.
@@ -135,6 +133,9 @@ async def main():
                     .with_termination_condition(lambda conversation: len(conversation) >= max_turns)
                     .build()
                 )
+                
+                print("=" * 80)
+                print(f"{persona.full_name} to discuss {topic.title}")
 
                 task = (
                     f"""{topic.description}. '{topic.trigger_event}' triggered the customer to seek advice. 
@@ -156,6 +157,7 @@ async def main():
                             print(f"[{eid}]:", end=" ", flush=True)
                             last_executor_id = eid
                         print(event.data, end="", flush=True)
+                        await asyncio.sleep(2) # adding delay to avoid rate limit errors
                     elif isinstance(event, WorkflowOutputEvent):
                         # Workflow completed - data is a list of ChatMessage
                         final_conversation = cast(list[ChatMessage], event.data)
@@ -178,13 +180,19 @@ async def main():
                         formatted_dialogue.append({"role": "user", "content": msg.text})
                     elif msg.author_name == "FinancialAdvisor":
                         formatted_dialogue.append({"role": "assistant", "content": msg.text})
+
                 #conversations is an object dict {"messages": [{}, {}, {}]}
                 record_conversations({"messages": formatted_dialogue})
+                
             except Exception as e:
                 print(f"Error occured for '{topic.title}': {e}")   
             finally:
                 await close()
-                # pass
+                time.sleep(3) # Adding delay 3 seconds to prevent rate limit errors
+            end = time.time()
+            print("= "* 80 + "\n")
+            print(f"Total time to generate topic '{topic.title}': {end - start} seconds")
+        
                 
 if __name__ == "__main__":
     asyncio.run(main())

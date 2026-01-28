@@ -4,7 +4,7 @@
 # Used the all available information from MAF documentation and tutorials to build this script.
 # ---------------------------------------
 import asyncio
-from datetime import time
+import time
 from typing import Annotated, Any, cast
 import os
 import json
@@ -190,8 +190,15 @@ async def main():
                 await close()
                 time.sleep(3) # Adding delay 3 seconds to prevent rate limit errors
             end = time.time()
-            print("= "* 80 + "\n")
-            print(f"Total time to generate topic '{topic.title}': {end - start} seconds")
+            print("\n" + "=" * 80 )
+            duration = end - start
+            print(f"Total time to generate topic '{topic.title}': {duration} seconds")
+            pause = 60 - duration
+            if pause > 0:
+                print("\n" + "=" * 80 )
+                print(f"Pausing for {pause} seconds to avoid 'Too Many Requests' errors...")
+                time.sleep(pause) # I was still having "Too Many Requests" errors on AzureCLI. So making the one iteration to be at least 60 seconds
+                print("\n" + "=" * 20 + " Resuming " + "=" * 20 )
         
                 
 if __name__ == "__main__":

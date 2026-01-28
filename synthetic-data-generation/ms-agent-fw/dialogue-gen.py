@@ -83,10 +83,10 @@ def round_robin_selector(state: GroupChatState) -> str:
 async def main():
    
     user_scenarios = load_scenarios("scenarios.json")
-    max_turns = 11 # Maximun conversation turns - should be odd number to end with advisor, it would be rude if advisor stops abruptly all the time
+    max_turns = 15 # Maximun conversation turns - should be odd number to end with advisor, it would be rude if advisor stops abruptly all the time
     # Create orchestrator agent for speaker selection
     # agent_factory, close = await create_azure_ai_agent()
-    for entry in user_scenarios[12:]: # I partially completed earlier and added the 1.5s sleep to fix rate limit errors
+    for entry in user_scenarios[29:]: # I partially completed earlier and added the 1.5s sleep to fix rate limit errors
         persona = entry.user
         for topic in entry.scenarios:
             start = time.time()
@@ -99,7 +99,7 @@ async def main():
                         You start a conversation with the advisor. You may begin with a greeting based on your personality and mood, otherwise you may start with your first question. Wait for the advisor's response before continuing the conversation. You don't need to be overly wordy, just be natural and realistic.
                         You may provide additional information about your situation if needed. You may ask follow-up questions based on the advisor's responses.
                         Your goal is to get financial advice for your current situation until you are satisfied with the information provided and think you have enough.
-                        Aim to finish the conversation within {max_turns} turns.
+                        Aim to finish the conversation under {max_turns} turns.
                         When you are done and you don't have any more questions, respond by indicating to end the conversation.""",
                         )
                 
@@ -133,7 +133,7 @@ async def main():
                     .with_termination_condition(lambda conversation: len(conversation) >= max_turns)
                     .build()
                 )
-                
+                time.sleep(5)
                 print("=" * 80)
                 print(f"{persona.full_name} to discuss {topic.title}")
 
@@ -157,14 +157,12 @@ async def main():
                             print(f"[{eid}]:", end=" ", flush=True)
                             last_executor_id = eid
                         print(event.data, end="", flush=True)
-                        await asyncio.sleep(2) # adding delay to avoid rate limit errors
+                        await asyncio.sleep(5) # adding delay to avoid rate limit errors. Increased to 5s as it hits maximum tokens limit for long conversations
                     elif isinstance(event, WorkflowOutputEvent):
                         # Workflow completed - data is a list of ChatMessage
                         final_conversation = cast(list[ChatMessage], event.data)
-                # print(f"\nFinal conversation: {dir(final_conversation[0])}\n")
-                # print(f"\n{final_conversation[0].author_name}: {final_conversation[0].text}\n")
-                # print(f"\n{final_conversation[1].author_name}: {final_conversation[1].text}\n")
-                # print(f"\n{final_conversation[2].author_name}: {final_conversation[2].text}\n")
+                        await asyncio.sleep(5)
+
                 if final_conversation:
                     print("\n\n" + "=" * 80)
                     print("Final Conversation:")

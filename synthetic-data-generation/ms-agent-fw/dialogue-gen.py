@@ -86,7 +86,7 @@ async def main():
     max_turns = 11 # Maximun conversation turns - should be odd number to end with advisor, it would be rude if advisor stops abruptly all the time
     # Create orchestrator agent for speaker selection
     # agent_factory, close = await create_azure_ai_agent()
-    for entry in user_scenarios[9:]: # I partially completed earlier and added the 1.5s sleep to fix rate limit errors
+    for entry in user_scenarios[12:]: # I partially completed earlier and added the 1.5s sleep to fix rate limit errors
         persona = entry.user
         for topic in entry.scenarios:
             start = time.time()

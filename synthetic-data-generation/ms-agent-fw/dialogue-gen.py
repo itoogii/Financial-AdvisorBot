@@ -36,6 +36,20 @@ def load_scenarios(file_path: str) -> list[UserScenarios]:
     scenarios = [UserScenarios.model_validate(entry) for entry in data]
     return scenarios
 
+# Record the conversations to the file. Using the same method as in conv_flow/main.py
+def record_conversations(conversations):
+        if os.path.exists("dialogue-dataset.jsonl"):
+            try:
+                with open("dialogue-dataset.jsonl", "a") as file:
+                    file.write(json.dumps(conversations) + "\n")
+            except Exception as e:
+                print(f"Unable to append dialogue-dataset.jsonl: {e}")
+        else:
+            # Writing new scenarios to the scenarios file
+            with open("dialogue-dataset.jsonl", "w") as file:
+                file.write(json.dumps(conversations) + "\n")
+
+
 async def create_azure_ai_agent() -> tuple[Callable[..., Awaitable[Any]], Callable[[], Awaitable[None]]]:
     """Helper method to create an Azure AI agent factory and a close function.
     This makes sure the async context managers are properly handled.
@@ -58,26 +72,6 @@ def end_conversation(
 ) -> str:
     return f"TERMINATE: {message}"
 
-def smart_selector(state: GroupChatState) -> str:
-    """Select speakers based on conversation content and context."""
-    conversation = state.conversation
-
-    last_message = conversation[-1] if conversation else None
-
-    # If no messages yet, start with Customer
-    if not last_message:
-        return "Customer"
-
-    # Check last message content
-    last_text = last_message.text.lower()
-
-    # after Customer responded, switch to FinancialAdvisor
-    if "I have finished" in last_text and last_message.author_name == "Customer":
-        return "FinancialAdvisor"
-
-    # Else continue with researcher until it indicates completion
-    return "Customer"
-
 def round_robin_selector(state: GroupChatState) -> str:
     """A round-robin selector function that picks the next speaker based on the current round index."""
     participant_names = list(state.participants.keys())
@@ -88,14 +82,13 @@ def round_robin_selector(state: GroupChatState) -> str:
 async def main():
    
     user_scenarios = load_scenarios("scenarios.json")
-    final_dataset = []
     max_turns = 11 # Maximun conversation turns - should be odd number to end with advisor, it would be rude if advisor stops abruptly all the time
      # Create orchestrator agent for speaker selection
     # agent_factory, close = await create_azure_ai_agent()
 
         
-    for entry in [user_scenarios[1]]:  # Limit to first persona for testing
-        for topic in [entry.scenarios[0],entry.scenarios[1]]: # I could do [0:2], but just explicitly listing for clarity
+    for entry in user_scenarios: 
+        for topic in entry.scenarios: 
             persona = entry.user
             print("=" * 80)
             print(f"{persona.full_name} to discuss {topic.title}")
@@ -103,11 +96,12 @@ async def main():
             try:
                 user = await agent_factory(
                         name="Customer",
-                        instructions=f"""You are {persona.full_name} and your persona is: {persona}.
-                        You are a Customer who is seeking advice from a financial advisor in a conversational manner. Use your own speech style and behavior that matches your persona when talking to the professional advisor who you believe can help you with your financial investment questions.
-                        You start a conversation as your persona and wait for the advisor's response before continuing the dialogue.
+                        instructions=f"""You are {persona.full_name}. You have personality, speech style and behavior that matches your persona: {persona}.
+                        As a customer, you are seeking advice from the financial advisor in a conversational manner for the scenario and situation you are currently facing.
+                        As a customer, you start a conversation with the advisor, and wait for the advisor's response before continuing the conversation.
                         You may provide additional information about your situation as needed. You may ask follow-up questions based on the advisor's responses.
                         Your goal is to get financial advice for your current situation until you are satisfied with the information provided and think you have enough.
+                        Aim to finish the conversation within {max_turns} turns.
                         When you are done and you don't have any more questions, respond by indicating to end the conversation.""",
                         )
                 
@@ -143,9 +137,9 @@ async def main():
                 )
 
                 task = (
-                    f"""{topic.description}. '{topic.trigger_event}' triggered the Customer to seek advice. 
+                    f"""{topic.description}. '{topic.trigger_event}' triggered the customer to seek advice. 
                     {'Customer remembers ' + topic.history if topic.history else ''} 
-                    Customer is feeling {topic.persona_mood}. Customer starts the conversation for {topic.title}"""
+                    Customer is feeling {topic.persona_mood}. Customer starts the conversation to discuss {topic.title}"""
                 )
                 
                 final_conversation: list[ChatMessage] = []
@@ -184,16 +178,13 @@ async def main():
                         formatted_dialogue.append({"role": "user", "content": msg.text})
                     elif msg.author_name == "FinancialAdvisor":
                         formatted_dialogue.append({"role": "assistant", "content": msg.text})
-                
-                if formatted_dialogue:
-                    final_dataset.append({"messages": formatted_dialogue})
+                #conversations is an object dict {"messages": [{}, {}, {}]}
+                record_conversations({"messages": formatted_dialogue})
+            except Exception as e:
+                print(f"Error occured for '{topic.title}': {e}")   
             finally:
                 await close()
                 # pass
                 
-    with open("synthetic_financial_dialogue.jsonl", "w") as f:
-        for entry in final_dataset:
-            f.write(json.dumps(entry) + "\n")
-
 if __name__ == "__main__":
     asyncio.run(main())

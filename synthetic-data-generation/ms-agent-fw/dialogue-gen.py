@@ -78,15 +78,16 @@ def round_robin_selector(state: GroupChatState) -> str:
     participant_names = list(state.participants.keys())
     speaker = participant_names[state.current_round % len(participant_names)]
     print(f"[Selector] Round {state.current_round}: selected speaker is {speaker}")
+    time.sleep(5)
     return speaker
 
 async def main():
    
     user_scenarios = load_scenarios("scenarios.json")
-    max_turns = 15 # Maximun conversation turns - should be odd number to end with advisor, it would be rude if advisor stops abruptly all the time
+    max_turns = 9 # Maximun conversation turns - should be odd number to end with advisor, it would be rude if advisor stops abruptly all the time
     # Create orchestrator agent for speaker selection
     # agent_factory, close = await create_azure_ai_agent()
-    for entry in user_scenarios[29:]: # I partially completed earlier and added the 1.5s sleep to fix rate limit errors
+    for entry in user_scenarios[38:]: # I partially completed earlier and added the 1.5s sleep to fix rate limit errors
         persona = entry.user
         for topic in entry.scenarios:
             start = time.time()
@@ -94,33 +95,37 @@ async def main():
             try:
                 user = await agent_factory(
                         name="Customer",
-                        instructions=f"""You are {persona.full_name}. Your personality, speech style and persona is defined as: {persona}. Be sure to embody this persona in your responses.
-                        As a customer, you are seeking advice from the financial advisor in a conversational manner for the scenario and situation you are currently facing.
-                        You start a conversation with the advisor. You may begin with a greeting based on your personality and mood, otherwise you may start with your first question. Wait for the advisor's response before continuing the conversation. You don't need to be overly wordy, just be natural and realistic.
-                        You may provide additional information about your situation if needed. You may ask follow-up questions based on the advisor's responses.
-                        Your goal is to get financial advice for your current situation until you are satisfied with the information provided and think you have enough.
-                        Aim to finish the conversation under {max_turns} turns.
-                        When you are done and you don't have any more questions, respond by indicating to end the conversation.""",
-                        )
+                        instructions=f"""
+                        Role: You are {persona.full_name}. Your personality and background are: {persona}.
+                        Objective: Start and maintain a conversation with a financial advisor named Hermes to resolve your current financial situation.
+                        STRICT Interaction Rules:
+                        - Single Turn Only: You must ONLY output one response for {persona.full_name}.
+                        - No Hallucinating Advisor: Never write, predict, or answer on behalf of Hermes. Your response must end immediately after your persona finishes speaking.
+                        - Conciseness: Be natural and realistic. Do not be overly wordy.
+                        - Goal-Oriented: Ask follow-up questions until you feel your specific situation is addressed. Aim to conclude the interaction within {max_turns//2} turns.
+                        General Guidelines:
+                        - Start: Begin the conversation by greeting Hermes and explaining your situation. Stop and wait for Hermes to respond. Continue ONLY after Hermes replies.
+                        - Termination: Once satisfied, indicate the conversation is over to Hermes and stop.
+                        - Clarity: If a response from Hermes is unclear, you can ask for clarification before proceeding.
+                        - Natural and organic conversation: You may avoid addressing Hermes by name in every response. For instance, you can say "I think that's a great idea" that sounds more natural than "I think that's a great idea, John." This creates a more organic flow." 
+                        """,
+                        ) # Last prompt came from ConvoGen paper
                 
                 advisor = await agent_factory(
                         name="FinancialAdvisor",
                         instructions=(
-                            f"""You are financial advisor named Hermes. You are expert in providing meaningful and thoughtful financial advice in stock investment.
-                            Currently, you are engaging with user named {persona.full_name} who is {persona.age} years old and works as a {persona.occupation} in {persona.location} in a conversation.  
-                            If you are unsure about a user's request, ask for clarifications rather than making assumptions. 
-                            If the content is inappropriate or harmful, politely refuse to answer and redirect the conversation to financial topics. 
-                            - You don't need to address the user by name in every turn and it will make the conversation more natural. 
-                            - You can ask questions, provide clarifications, and offer suggestions to guide the conversation in respective tone.
-                            - Never sound artificial or robotic. Be realistic and natural in your responses.
-                            - You cannot express promise such as 'I will do that' or 'I promise the stock will perform well'.
-                            - ALWAYS prioritize safety: remind the user about investment risks and uncertainties when providing advice.
-                            - Avoid jargon and technical terms unless the user demonstrates understanding.
-                            - Provide balanced advice considering both short-term and long-term financial goals.
-                            - If the user provides extra information, incorporate it into your advice appropriately.
-                            - Ensure ethical standards in all responses. Don't use slang or overly casual language. Be professional yet approachable.
-                            - Ensure all advice provided adheres to legal and ethical standards of either US or UK based on users' respective locations
-                            IMPORTANT: When the user indicates they are done (e.g., says goodbye, thank you, no more questions), respond with a concise closing statement and end the conversation 
+                            f"""
+                                Role: You are Hermes, a professional financial advisor specializing in stock investments.
+                                Objective: Engage with {persona.full_name} ({persona.age}, {persona.occupation}, based in {persona.location}). Provide meaningful, balanced, and ethical financial advice.
+                                General Guidelines:
+                                - You are the expert. If the user suggests their own answers or seems confused, gently correct them and provide the professional perspective.
+                                - ALWAYS prioritize risk disclosure. Remind the user of market uncertainties.
+                                - Be professional yet approachable, natural and realistic. Avoid jargon unless the user is clearly knowledgeable. Avoid slang or overly casual language.
+                                - Adhere to {persona.location} (US/UK) legal and ethical standards.
+                                - If the user signals the end of the conversation (For instance: "Thank you," "Goodbye"), provide a concise closing and stop.
+                                - Clarity: If a request is unclear, ask for clarification before advising. Redirect the conversation back to financial topics if it diverts.
+                                - Avoid hallucination: Your response must end immediately after you finish speaking.
+                                - Natural and organic conversation: You may avoid addressing user by name in every response. For instance, you can say "I think that's a great idea" that sounds more natural than "I think that's a great idea, John." This creates a more organic flow." 
                             """
                         ),
                     )  
@@ -133,7 +138,6 @@ async def main():
                     .with_termination_condition(lambda conversation: len(conversation) >= max_turns)
                     .build()
                 )
-                time.sleep(5)
                 print("=" * 80)
                 print(f"{persona.full_name} to discuss {topic.title}")
 
@@ -157,11 +161,12 @@ async def main():
                             print(f"[{eid}]:", end=" ", flush=True)
                             last_executor_id = eid
                         print(event.data, end="", flush=True)
+                        print("Async delay 5 seconds...")
                         await asyncio.sleep(5) # adding delay to avoid rate limit errors. Increased to 5s as it hits maximum tokens limit for long conversations
                     elif isinstance(event, WorkflowOutputEvent):
                         # Workflow completed - data is a list of ChatMessage
                         final_conversation = cast(list[ChatMessage], event.data)
-                        await asyncio.sleep(5)
+                        await asyncio.sleep(10)
 
                 if final_conversation:
                     print("\n\n" + "=" * 80)

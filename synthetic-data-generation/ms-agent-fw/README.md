@@ -13,3 +13,11 @@ pip install agent-framework --pre
 ```shell
 uv pip install unsloth datasets transformers torch
 ```
+## About
+The dialogue-dataset.jsonl is formatted in OpenAI ChatML. Refer to Unsloth Dataset guide [Link](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide/datasets-guide)  
+
+- The "dialogue-gen.py" is the main script used for generating the synthetic dataset.
+- The "financial-expert-dataset.py" is early test version script that I used for local Ollama model. 
+- The "chat-simulator.py" is adapted from Microsoft Agent Framework tutorial examples to test the multi-turn group conversation workflow.
+- The "simple.py" script is copied from Microsoft Agent Framework to test the Azure CLI authentication and Azure AI API with MAF. 
+- The "user_lookup.py" script is created to find the user persona index from the "scenarios.json" file. The indexing is used for continuing the conversation workflows from the next persona in the list. This file was useful as I often needed to stop the dialogue-gen.py script to update the agent instructions, and then wanted to continue it starting from the next persona.  

@@ -1,5 +1,7 @@
 ## Synthetic data generation with CrewAI
 
+I used CrewAI to generate the synthetic dataset for user personas and conversation scenarios that the persona use to discuss with the Financial advisor. 
+The "conv-flow" is the right folder that you want to review. I used the conv-flow to generate 147 user personas and 2000+ conversation scenarios. 
 
 ## Directory structure
 - crewai: CrewAI Agentic Synthetic data generation
@@ -28,12 +30,12 @@ crewai create flow conv-flow
 ```
 
 ### ConsultGen
-(Early attempt) I installed crewai package in "consultgen" directory, and updated the agents and tasks for the synthetic user persona generation. 
+(My early attempt) I installed crewai package in "consultgen" directory, and updated the agents and tasks for the synthetic user persona generation. 
 The report from the User Persona is renamed to "generated_personas.md". You can ignore this directory. 
 
 
 ### Conv_flow
-https://docs.crewai.com/en/guides/flows/first-flow
+[Guide Flow](https://docs.crewai.com/en/guides/flows/first-flow)
 I used the CrewAI Flows to generate the synthetic dataset for personas and scenarios for all personas to discuss with the financial advisor. 
 Please see the README.md in that folder for the generated contents. 
 

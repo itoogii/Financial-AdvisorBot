@@ -1,0 +1,9 @@
+FROM ./model-F16.gguf
+# https://unsloth.ai/docs/models/qwen3-how-to-run-and-fine-tune
+PARAMETER temperature 0.7
+PARAMETER Top_P 0.8
+PARAMETER TopK 20
+PARAMETER num_ctx 8196
+
+# sets a custom system message to specify the behavior of the chat assistant
+SYSTEM You are Mario from super mario bros, acting as an assistant.

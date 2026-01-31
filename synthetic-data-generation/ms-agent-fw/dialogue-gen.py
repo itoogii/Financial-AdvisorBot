@@ -21,15 +21,13 @@ from agent_framework import (
     GroupChatBuilder, 
     GroupChatState,
     WorkflowOutputEvent,
-    AgentResponseUpdate
-
 )
 from agent_framework.azure import AzureAIClient
 from azure.identity.aio import AzureCliCredential
 from dotenv import load_dotenv
 
 load_dotenv()
-max_turns = 13 # Maximun conversation turns - should be odd number to end with advisor as it would be rude if advisor stops abruptly all the time
+max_turns = 9 # Maximun conversation turns - should be odd number to end with advisor as it would be rude if advisor stops abruptly all the time
 
 # Load the scenarios and make it pydantic objects
 def load_scenarios(file_path: str) -> list[UserScenarios]:
@@ -84,7 +82,7 @@ def round_robin_selector(state: GroupChatState) -> str:
     participant_names = list(state.participants.keys())
     speaker = participant_names[state.current_round % len(participant_names)]
     print(f"[Selector] Round {state.current_round}: selected speaker is {speaker}")
-    time.sleep(5)
+    time.sleep(0.5)
     return speaker
 
 async def main():
@@ -94,7 +92,7 @@ async def main():
     # agent_factory, close = await create_azure_ai_agent()
     customer_turns = max_turns // 2
     print(f"Customers have maximum {customer_turns} turns to discuss with Hermes.")
-    for entry in user_scenarios[67:]: # Continuing from where I stopped
+    for entry in user_scenarios[76:]: # Continuing from where I stopped
         persona = entry.user
         for topic in entry.scenarios:
             start = time.time()
@@ -106,15 +104,15 @@ async def main():
                             Role: You are {persona.full_name}. Your personality and background are: {persona}.
                             Objective: Start and maintain a conversation with a financial advisor named Hermes to resolve your current financial situation.
                             STRICT Interaction Rules:
-                            - Single Turn Only: You must ONLY output one response for {persona.full_name}. You have {customer_turns} turns available.
+                            - Single Turn Only: You must ONLY output one response for {persona.full_name}. You have maximum of {customer_turns} turns available.
                             - Avoid Hallucination: Never write, predict, or answer on behalf of Hermes. Your response must end immediately after your persona finishes speaking.
                             - Conciseness: Be natural and realistic. Do not be overly wordy.
                             - Goal-Oriented: Ask follow-up questions until you feel your specific situation is addressed.
                             General Guidelines:
-                            - Start: Begin the conversation by greeting Hermes and explaining your situation. Stop and wait for Hermes to respond. Continue ONLY after Hermes replies.
+                            - Start: Begin the conversation by greeting Hermes and explaining your situation. Stop and wait for Hermes to respond. Continue after Hermes replied.
                             - Clarity: If a response from Hermes is unclear, you can ask for clarification before proceeding.
-                            - Natural and organic conversation: You may avoid addressing Hermes by name in every response. For instance, you can say "I think that's a great idea" that sounds more natural than "I think that's a great idea, John." This creates a more organic flow. 
-                            - Termination: Aim to conclude within the allotted turns. Once satisfied, inform that you are ending the conversation with Hermes (For instance: "Thank you," "bye") and stop.
+                            - Natural and organic conversation: Avoid addressing Hermes by name in every response. For instance, you can say "I think that's a great idea" that sounds more natural than "I think that's a great idea, John." This creates a more organic flow. 
+                            - Termination: Aim to conclude within the allotted turns and stop.
                         """,
                         
                         ) 
@@ -132,7 +130,7 @@ async def main():
                             - Clarity: If a request is unclear, ask for clarification before advising. Redirect the conversation back to financial topics if it diverts.
                             - Avoid hallucination: Your response must end immediately after you finish speaking.
                             - Natural and organic conversation: It is polite to greet user by name. However, you may avoid addressing user by name in every response. For instance, you can say "I think that's a great idea" that sounds more natural than "I think that's a great idea, John." This creates a more organic flow.
-                            - Termination: If the user indicates to end the conversation (For instance: "Thank you," "bye"), respond with a concise closing and stop to halt (no more response needed).
+                            - Termination: If the user indicates to end the conversation, respond with a concise closing and stop.
                             """
                         ),
                         # tools=[end_conversation], # instruction - After you respond with a closing message, call the tool end_conversation function.
@@ -154,25 +152,13 @@ async def main():
                 )
                 
                 final_conversation: list[ChatMessage] = []
-                last_executor_id: str | None = None
 
                 # Run the workflow
                 async for event in workflow.run_stream(task):
-                    if isinstance(event, AgentResponseUpdate):
-                        # Print streaming agent updates
-                        eid = event.executor_id
-                        if eid != last_executor_id:
-                            if last_executor_id is not None:
-                                print()
-                            print(f"[{eid}]:", end=" ", flush=True)
-                            last_executor_id = eid
-                        print(event.data, end="", flush=True)
-                        print("Async delay 2 seconds...")
-                        await asyncio.sleep(2) # adding delay to avoid rate limit errors. Increased to 5s as it hits maximum tokens limit for long conversations
-                    elif isinstance(event, WorkflowOutputEvent):
+                    if isinstance(event, WorkflowOutputEvent):
                         # Workflow completed - data is a list of ChatMessage
                         final_conversation = cast(list[ChatMessage], event.data)
-                        await asyncio.sleep(8)
+                        await asyncio.sleep(2)
 
                 if final_conversation:
                     print("\n\n" + "=" * 80)
@@ -190,19 +176,19 @@ async def main():
                     elif msg.author_name == "FinancialAdvisor":
                         formatted_dialogue.append({"role": "assistant", "content": msg.text})
 
-                #conversations is an object dict {"messages": [{}, {}, {}]}
+                #conversations is an object dict {"messages": [{conversation}, {conversation}, {conversation}]}
                 record_conversations({"messages": formatted_dialogue})
                 
             except Exception as e:
                 print(f"Error occured for '{topic.title}': {e}")   
             finally:
                 await close()
-                time.sleep(3) # Adding delay 3 seconds to prevent rate limit errors
+                time.sleep(2)  # To avoid the Rate Limit error on Azure AI
             end = time.time()
             print("\n" + "=" * 80 )
             duration = end - start
             print(f"Total time to generate topic '{topic.title}': {duration} seconds")
-            pause = 60 - duration
+            pause = 50 - duration
             if pause > 0:
                 print("\n" + "=" * 80 )
                 print(f"Pausing for {pause} seconds to avoid 'Too Many Requests' errors...")

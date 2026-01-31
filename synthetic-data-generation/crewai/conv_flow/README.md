@@ -5,8 +5,13 @@ Each crew has two members. The first crew will generate the user personas in giv
 
 ## Synthetic files
 
-My crews generated the personas.json file for user personas, and scenarios.json file for conversation scenarios for the personas. Both files are located in this base project directory.
+My crews generated the personas.json (147 individual personas) file for user personas, and scenarios.json file for conversation scenarios. Both files are located in this base directory.
 I also tasked the first crew to save the user research document in "research_investor.md". I hope you will find them useful. 
+
+The generated contents are:
+- personas.json
+- scenarios.json
+- research_investor.md
 
 
 **See Below for CrewAI Instruction** &#x1F447; (provided by CrewAI template)

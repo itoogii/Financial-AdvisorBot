@@ -3,9 +3,9 @@
 
 ## Directory structure
 - crewai: CrewAI Agentic Synthetic data generation
-    * consultgen: The CrewAI crews test to generate synthetic data. 
-    * conv-flow: The CrewAI Flows to control the synthetic data generation 
-    * crewai-book: The jupyter notebooks to evaluate the CrewAI. 
+    * consultgen (early attempt): The CrewAI crews test to generate synthetic data. 
+    * conv-flow (main one): The CrewAI Flows to control the synthetic data generation 
+    * crewai-book (practice): The jupyter notebooks to evaluate the CrewAI. 
 
 ## CrewAI installation
 
@@ -28,12 +28,14 @@ crewai create flow conv-flow
 ```
 
 ### ConsultGen
-In my early User Persona generation, I installed crewai package in "consultgen" directory, and updated the agents and tasks for the synthetic user persona generation. 
-The report from the User Persona is renamed to "generated_personas.md". 
+(Early attempt) I installed crewai package in "consultgen" directory, and updated the agents and tasks for the synthetic user persona generation. 
+The report from the User Persona is renamed to "generated_personas.md". You can ignore this directory. 
 
 
 ### Conv_flow
 https://docs.crewai.com/en/guides/flows/first-flow
+I used the CrewAI Flows to generate the synthetic dataset for personas and scenarios for all personas to discuss with the financial advisor. 
+Please see the README.md in that folder for the generated contents. 
 
 ### CrewAI in notebook - crewai-book
 

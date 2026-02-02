@@ -1,12 +1,12 @@
 # Synthetic dataset generation
 
-In this CrewAI Flows project I added 2 crews to work to generate the user personas and conversation scenarios. 
-Each crew has two members. The first crew will generate the user personas in given Pydantic model, and using these user personas the second crew will generate the conversation scenarios with financial advisor. 
+In this CrewAI Flows project I added 2 crews to generate user personas and conversation scenarios. 
+Each crew has two members. The first crew generates the user personas in given Pydantic model. The second crew writes the conversation scenarios for the user personas. 
 
 ## Synthetic files
 
-My crews generated the personas.json (147 individual personas) file for user personas, and scenarios.json file for conversation scenarios. Both files are located in this base directory.
-I also tasked the first crew to save the user research document in "research_investor.md". I hope you will find them useful. 
+The crews created the personas.json (147 individual personas) and scenarios.json files in predefined pydantic model format.
+I also tasked the first crew to save the user-research document in "research_investor.md". I hope you will find them useful. 
 
 The generated contents are:
 - personas.json

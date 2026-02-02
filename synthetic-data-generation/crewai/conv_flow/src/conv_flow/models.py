@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict
 
-
 # Defined models for structured data below
 class Persona(BaseModel):
     username: str = Field(description="username of the persona")

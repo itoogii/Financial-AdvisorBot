@@ -5,3 +5,5 @@ My plan switched from Llama-3.2/Gemma-3 to Qwen-3. While I initially considered 
 
 **Note** 
 The Jupyter notebook file is copied from unsloth tutorial. 
+
+The fine-tuned Qwen3 model is uploaded to [Huggingface hub](https://huggingface.co/Battogtokh/Qwen3-4B-Instruct-unsloth-FinAdvisor-gguf). 

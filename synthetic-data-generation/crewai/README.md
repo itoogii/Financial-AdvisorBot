@@ -1,13 +1,13 @@
 ## Synthetic data generation with CrewAI
 
-I used CrewAI to generate the synthetic dataset for user personas and conversation scenarios that the persona use to discuss with the Financial advisor. 
-The "conv-flow" is the right folder that you want to review. I used the conv-flow to generate 147 user personas and 2000+ conversation scenarios. 
+I used CrewAI to generate the synthetic dataset for user personas and conversation scenarios for the invidual personas use to discuss with the Financial advisor. 
+The "conv-flow" is the directory that you want to review. I used the conv-flow to generate 147 user personas for 2000+ conversation scenarios. 
 
 ## Directory structure
 - crewai: CrewAI Agentic Synthetic data generation
     * consultgen (early attempt): The CrewAI crews test to generate synthetic data. 
-    * conv-flow (main one): The CrewAI Flows to control the synthetic data generation 
-    * crewai-book (practice): The jupyter notebooks to evaluate the CrewAI. 
+    * conv-flow (final attempt): The CrewAI Flows to control the synthetic data generation 
+    * crewai-book (practice): The jupyter notebooks to practice the CrewAI. 
 
 ## CrewAI installation
 

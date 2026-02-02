@@ -14,9 +14,13 @@ lora*
 checkpoints/
 unsloth*
 model*
+qwen-model
+outputs
 llama.cpp
 *.gguf
 *.bin
 *.pth
 *.ckpt
 *.safetensors
+phi-3.5_conversational/
+lora_qwenmodel/

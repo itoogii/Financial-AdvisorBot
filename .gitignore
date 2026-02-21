@@ -24,3 +24,7 @@ llama.cpp
 *.safetensors
 phi-3.5_conversational/
 lora_qwenmodel/
+
+# Since I am using data from yfinance for personal purpose, I don't want to share it publicly
+yfinance_stock_data/
+parquet_stock_data/

@@ -1,4 +1,14 @@
+## Installation
+
+Python environment in Python 3.14 with required packages from requirements.txt
+```shell
+#Using pyenv
+pyenv virtualenv 3.14 rl-project-3.14
+pyenv activate rl-project-3.14
+```
+
 ## The definition  
+
 
 To forecast a future trend of the stock prices, I will use a daily historical stock price dataset to train the Reinforcement learning model. 
 The dataset must be prepared as "clean" and "transformed". 

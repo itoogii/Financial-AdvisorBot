@@ -1,3 +1,4 @@
+
 ## Installation
 
 Python environment in Python 3.14 with required packages from requirements.txt
@@ -35,3 +36,12 @@ Reward function:
 
 **Note**  
 The Monte-Carlo seems not suitable. In my opinion, it should experience different price movements everytime where it shouldn't have any prior episodic interactions to update the value function. 
+
+## Compliance & Data Usage
+This project utilizes financial market data for educational and research purposes. To ensure compliance with data provider terms and licensing, please note the following:
+
+Data Sources: Data was sourced via the yfinance library and historical archives from Kaggle (which are derivatives of Yahoo Finance data).
+
+Non-Redistribution: To comply with terms of service and licensing, no raw data files (CSV/Parquet) are included in this repository.
+
+Permitted Use: This project is strictly non-commercial. The analysis and models developed here are intended for personal learning and academic demonstration.

@@ -25,6 +25,9 @@ llama.cpp
 phi-3.5_conversational/
 lora_qwenmodel/
 
-# Since I am using data from yfinance for personal purpose, I don't want to share it publicly
+# Since I am using data from yfinance for personal purpose, I am excluding them from the repo.
 yfinance_stock_data/
-parquet_stock_data/
+parquet*
+yfinance*
+*.csv
+*.parquet

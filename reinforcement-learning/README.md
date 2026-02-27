@@ -25,14 +25,21 @@ The Farama Gymnasium documentation provides the following key design questions f
 &#x1F3F9; **What actions can the agent take?**  
 -Discrete choices (up trend - bullish, down trend - bearish, sideways - neutral).   
 
-&#x1F3C6; **How do we measure success?**
+&#x1F3C6; **How do we measure success?**  
 -I measure the success by rewards it received from the accurate predictions
 
-&#x1F31C; **When should episodes end?**
--An episode ends once all available historical data for a given stock has been processed.
--Episodes (Epoch) end after all data in the training dataset has been processed.  
+&#x1F31C; **When should episodes end?**  
+-An episode ends once all available historical data for a given stock has been processed.  
+-Episodes (Epoch) end after all data in the training dataset has been processed. 
+-I should terminate the training as early as possible if the total rewards is too negative.
 
+#### Environment
+Observation (output) space: (Technical Analysis Indicators)
 
+Action (input) space: 3 discrete actions (predictions) for hold (0), buy (1), sell (2)
+```python
+self.action_space = gym.spaces.Discrete(3)
+```
 
 
 - Find a simple method to normalize the price data values. The prices range widely, and they differ a lot from one company to another, and the split and merge of the stocks could affect the future prices from $1000 to $10. I need to make them normalized before feeding to ML training. Probably the RSI or MFI indicators are good to get started. 

@@ -8,3 +8,7 @@ ipykernel
 tqdm
 ta
 scikit-learn
+gymnasium
+torch
+pytest
+

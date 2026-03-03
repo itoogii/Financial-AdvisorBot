@@ -9,6 +9,13 @@ pyenv activate rl-project-3.14
 pip install -r requirements.txt
 ```
 
+Python environment setup using uv:
+```shell
+uv venv -p 3.14 ~/pythonenvs/advisorbot-rl-3.14
+source ~/pythonenvs/advisorbot-rl-3.14/bin/activate 
+uv pip install -r requirements.txt
+```
+
 ## The definition  
 
 To forecast a future trend of the stock prices, I used a daily historical stock price dataset to train the Reinforcement learning model. 
@@ -32,7 +39,7 @@ The Farama Gymnasium documentation provides the following key questions for the 
 &#x1F34B; **When should episodes end?**   
 🎠 A single episode is full cycle of processing a stock historical data.  
 🎠 Epoch is full cycle of processing all available training data.   
-🎠 Training will terminate when it hits the minimum acceptable value.  
+🎠 Training will terminate when it hits the minimum reward value.
 
 #### Environment
 Observation (output) space: (Technical Analysis Indicators)

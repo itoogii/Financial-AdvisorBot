@@ -1,0 +1,16 @@
+{"time":"2026-03-03T20:59:26.744220902-08:00","level":"INFO","msg":"stream: starting","core version":"0.25.0"}
+{"time":"2026-03-03T20:59:27.08780256-08:00","level":"INFO","msg":"stream: created new stream","id":"xfj4bk3a"}
+{"time":"2026-03-03T20:59:27.088997095-08:00","level":"INFO","msg":"handler: started","stream_id":"xfj4bk3a"}
+{"time":"2026-03-03T20:59:27.089206745-08:00","level":"INFO","msg":"stream: started","id":"xfj4bk3a"}
+{"time":"2026-03-03T20:59:27.089313798-08:00","level":"INFO","msg":"sender: started","stream_id":"xfj4bk3a"}
+{"time":"2026-03-03T20:59:27.089325306-08:00","level":"INFO","msg":"writer: started","stream_id":"xfj4bk3a"}
+{"time":"2026-03-03T20:59:27.368876595-08:00","level":"ERROR","msg":"git repo not found","error":"repository does not exist"}
+{"time":"2026-03-03T20:59:37.493369652-08:00","level":"WARN","msg":"tensorboard: no root directory","error":"timed out after 10s"}
+{"time":"2026-03-03T20:59:37.494079271-08:00","level":"INFO","msg":"tensorboard: tracking new log directory","rootDir":{},"logDir":"LocalOrCloudPath(LocalPath=\"/home/batto/AdvisorBot/reinforcement-learning/runs/DQN_training_1772600366\")","namespace":""}
+{"time":"2026-03-03T20:59:37.497948436-08:00","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/batto/AdvisorBot/reinforcement-learning/runs/DQN_training_1772600366/events.out.tfevents.1772600367.Force.279220.0","runPath":"runs/DQN_training_1772600366/events.out.tfevents.1772600367.Force.279220.0"}
+{"time":"2026-03-03T21:03:31.897412994-08:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-03-03T21:03:32.060269761-08:00","level":"INFO","msg":"handler: operation stats","stats":{}}
+{"time":"2026-03-03T21:03:32.06318919-08:00","level":"INFO","msg":"stream: closing","id":"xfj4bk3a"}
+{"time":"2026-03-03T21:03:32.063195583-08:00","level":"INFO","msg":"handler: closed","stream_id":"xfj4bk3a"}
+{"time":"2026-03-03T21:03:32.0632564-08:00","level":"INFO","msg":"sender: closed","stream_id":"xfj4bk3a"}
+{"time":"2026-03-03T21:03:32.06326162-08:00","level":"INFO","msg":"stream: closed","id":"xfj4bk3a"}

@@ -1,0 +1,5 @@
+2026-03-03 21:17:31,128 INFO    MainThread:279220 [wandb_init.py:setup_run_log_directory():717] Logging user logs to /home/batto/AdvisorBot/reinforcement-learning/wandb/run-20260303_211731-kiy01rdl/logs/debug.log
+2026-03-03 21:17:31,128 INFO    MainThread:279220 [wandb_init.py:setup_run_log_directory():718] Logging internal logs to /home/batto/AdvisorBot/reinforcement-learning/wandb/run-20260303_211731-kiy01rdl/logs/debug-internal.log
+2026-03-03 21:17:31,128 INFO    MainThread:279220 [wandb_init.py:init():844] calling init triggers
+2026-03-03 21:17:31,128 INFO    MainThread:279220 [wandb_init.py:init():849] wandb.init called with sweep_config: {}
+config: {'epsilon': 1.0, 'learning_rate': 0.0001, 'epsilon_decay': 3e-07, 'discount_factor': 0.99, '_wandb': {'code_path': '/home/batto/AdvisorBot/reinforcement-learning/7_Reinforcement_learning.ipynb'}}

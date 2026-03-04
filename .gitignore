@@ -35,3 +35,5 @@ parquet_test_data/
 parquet_train_data/
 validation_dataset/
 train_dataset/
+wandb/
+runs/

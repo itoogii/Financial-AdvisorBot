@@ -84,12 +84,14 @@ __all__ = [
     "ReplayBufferSamples",
 ]
 
+
 class ReplayBufferSamples(NamedTuple):
     observations: th.Tensor
     actions: th.Tensor
     next_observations: th.Tensor
     dones: th.Tensor
     rewards: th.Tensor
+
 
 def get_device(device: th.device | str = "auto") -> th.device:
     """
@@ -103,10 +105,14 @@ def get_device(device: th.device | str = "auto") -> th.device:
     """
     # Cuda by default
     if device == "auto":
-        device =th.device(th.accelerator.current_accelerator() if th.accelerator.is_available() else "cpu")
+        device = th.device(
+            th.accelerator.current_accelerator()
+            if th.accelerator.is_available()
+            else "cpu"
+        )
     # Force conversion to th.device
     device = th.device(device)
-    
+
     return device
 
 
@@ -119,7 +125,6 @@ class BaseBuffer(ABC):
     :param action_space: Action space
     :param device: PyTorch device
         to which the values will be converted
-    :param n_envs: Number of parallel environments
     """
 
     observation_space: spaces.Space
@@ -140,21 +145,6 @@ class BaseBuffer(ABC):
         self.pos = 0
         self.full = False
         self.device = get_device(device)
-
-    @staticmethod
-    def swap_and_flatten(arr: np.ndarray) -> np.ndarray:
-        """
-        Swap and then flatten axes 0 (buffer_size) and 1 (n_envs)
-        to convert shape from [n_steps, n_envs, ...] (when ... is the shape of the features)
-        to [n_steps * n_envs, ...] (which maintain the order)
-
-        :param arr:
-        :return:
-        """
-        shape = arr.shape
-        if len(shape) < 3:
-            shape = (*shape, 1)
-        return arr.swapaxes(0, 1).reshape(shape[0] * shape[1], *shape[2:])
 
     def size(self) -> int:
         """
@@ -195,9 +185,7 @@ class BaseBuffer(ABC):
         return self._get_samples(batch_inds)
 
     @abstractmethod
-    def _get_samples(
-        self, batch_inds: np.ndarray
-    ) -> ReplayBufferSamples:
+    def _get_samples(self, batch_inds: np.ndarray) -> ReplayBufferSamples:
         """
         :param batch_inds:
         :return:
@@ -227,24 +215,19 @@ class ReplayBuffer(BaseBuffer):
     :param observation_space: Observation space
     :param action_space: Action space
     :param device: PyTorch device
-    :param n_envs: Number of parallel environments
     :param optimize_memory_usage: Enable a memory efficient variant
         of the replay buffer which reduces by almost a factor two the memory used,
         at a cost of more complexity.
         See https://github.com/DLR-RM/stable-baselines3/issues/37#issuecomment-637501195
         and https://github.com/DLR-RM/stable-baselines3/pull/28#issuecomment-637559274
         Cannot be used in combination with handle_timeout_termination.
-    :param handle_timeout_termination: Handle timeout termination (due to timelimit)
-        separately and treat the task as infinite horizon task.
-        https://github.com/DLR-RM/stable-baselines3/issues/284
     """
 
     observations: np.ndarray
     next_observations: np.ndarray
-    actions: np.ndarray
-    rewards: np.ndarray
-    dones: np.ndarray
-    timeouts: np.ndarray
+    actions: int
+    rewards: np.float32
+    dones: bool
 
     def __init__(
         self,
@@ -254,9 +237,7 @@ class ReplayBuffer(BaseBuffer):
         device: th.device | str = "auto",
         optimize_memory_usage: bool = False,
     ):
-        super().__init__(
-            buffer_size, observation_space, action_space, device
-        )
+        super().__init__(buffer_size, observation_space, action_space, device)
 
         # Adjust buffer size - at least 1 element size
         self.buffer_size = max(buffer_size, 1)
@@ -276,12 +257,12 @@ class ReplayBuffer(BaseBuffer):
             # When optimizing memory, `observations` contains also the next observation
             self.next_observations = np.zeros(
                 (self.buffer_size, *self.obs_shape),
-                dtype=observation_space.dtype, # float32
+                dtype=observation_space.dtype,  # float32
             )
 
         self.actions = np.zeros(
             (self.buffer_size, 1),
-            dtype=self._maybe_cast_dtype(action_space.dtype), # type: int64
+            dtype=self._maybe_cast_dtype(action_space.dtype),  # type: int64
         )
 
         self.rewards = np.zeros((self.buffer_size, 1), dtype=np.float32)
@@ -313,7 +294,7 @@ class ReplayBuffer(BaseBuffer):
         next_obs: np.ndarray,
         action: int,
         reward: np.float32,
-        done: bool
+        done: bool,
     ) -> None:
 
         # Copy to avoid modification by reference
@@ -358,9 +339,7 @@ class ReplayBuffer(BaseBuffer):
     def _get_samples(self, batch_inds: np.ndarray) -> ReplayBufferSamples:
 
         if self.optimize_memory_usage:
-            next_obs = self.observations[
-                (batch_inds + 1) % self.buffer_size, :
-            ]
+            next_obs = self.observations[(batch_inds + 1) % self.buffer_size, :]
         else:
             next_obs = self.next_observations[batch_inds, :]
 

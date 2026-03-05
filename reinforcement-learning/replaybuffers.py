@@ -65,8 +65,7 @@ from __future__ import annotations
 
 import warnings
 from abc import ABC, abstractmethod
-from collections.abc import Generator
-from typing import Any, NamedTuple
+from typing import NamedTuple
 
 import numpy as np
 import torch as th
@@ -81,21 +80,9 @@ except ImportError:
 
 __all__ = [
     "BaseBuffer",
-    "RolloutBuffer",
     "ReplayBuffer",
-    "RolloutBufferSamples",
     "ReplayBufferSamples",
 ]
-
-
-class RolloutBufferSamples(NamedTuple):
-    observations: th.Tensor
-    actions: th.Tensor
-    old_values: th.Tensor
-    old_log_prob: th.Tensor
-    advantages: th.Tensor
-    returns: th.Tensor
-
 
 class ReplayBufferSamples(NamedTuple):
     observations: th.Tensor
@@ -103,39 +90,6 @@ class ReplayBufferSamples(NamedTuple):
     next_observations: th.Tensor
     dones: th.Tensor
     rewards: th.Tensor
-
-
-def get_obs_shape(
-    observation_space: spaces.Space,
-) -> tuple[int, ...] | dict[str, tuple[int, ...]]:
-    """
-    Get the shape of the observation (useful for the buffers).
-
-    :param observation_space:
-    :return:
-    """
-    if isinstance(observation_space, spaces.Box):
-        return observation_space.shape
-    elif isinstance(observation_space, spaces.Discrete):
-        # Observation is an int
-        return (1,)
-    elif isinstance(observation_space, spaces.MultiDiscrete):
-        # Number of discrete features
-        return (int(len(observation_space.nvec)),)
-    elif isinstance(observation_space, spaces.MultiBinary):
-        # Number of binary features
-        return observation_space.shape
-    elif isinstance(observation_space, spaces.Dict):
-        return {
-            key: get_obs_shape(subspace)
-            for (key, subspace) in observation_space.spaces.items()
-        }  # type: ignore[misc]
-
-    else:
-        raise NotImplementedError(
-            f"{observation_space} observation space is not supported"
-        )
-
 
 def get_device(device: th.device | str = "auto") -> th.device:
     """
@@ -149,14 +103,10 @@ def get_device(device: th.device | str = "auto") -> th.device:
     """
     # Cuda by default
     if device == "auto":
-        device = "cuda"
+        device =th.device(th.accelerator.current_accelerator() if th.accelerator.is_available() else "cpu")
     # Force conversion to th.device
     device = th.device(device)
-
-    # Cuda not available
-    if device.type == th.device("cuda").type and not th.cuda.is_available():
-        return th.device("cpu")
-
+    
     return device
 
 
@@ -186,7 +136,7 @@ class BaseBuffer(ABC):
         self.buffer_size = buffer_size
         self.observation_space = observation_space
         self.action_space = action_space
-        self.obs_shape = get_obs_shape(observation_space)  # type: ignore[assignment]
+        self.obs_shape = observation_space.shape
         self.pos = 0
         self.full = False
         self.device = get_device(device)
@@ -247,7 +197,7 @@ class BaseBuffer(ABC):
     @abstractmethod
     def _get_samples(
         self, batch_inds: np.ndarray
-    ) -> ReplayBufferSamples | RolloutBufferSamples:
+    ) -> ReplayBufferSamples:
         """
         :param batch_inds:
         :return:
@@ -363,8 +313,7 @@ class ReplayBuffer(BaseBuffer):
         next_obs: np.ndarray,
         action: int,
         reward: np.float32,
-        done: bool,
-        info: dict[str, Any],
+        done: bool
     ) -> None:
 
         # Copy to avoid modification by reference
@@ -407,27 +356,20 @@ class ReplayBuffer(BaseBuffer):
         return self._get_samples(batch_inds)
 
     def _get_samples(self, batch_inds: np.ndarray) -> ReplayBufferSamples:
-        # Sample randomly the env idx
-        env_indices = np.random.randint(0, high=self.n_envs, size=(len(batch_inds),))
 
         if self.optimize_memory_usage:
             next_obs = self.observations[
-                (batch_inds + 1) % self.buffer_size, env_indices, :
+                (batch_inds + 1) % self.buffer_size, :
             ]
         else:
-            next_obs = self.next_observations[batch_inds, env_indices, :]
+            next_obs = self.next_observations[batch_inds, :]
 
         data = (
-            self.observations[batch_inds, env_indices, :],
-            self.actions[batch_inds, env_indices, :],
+            self.observations[batch_inds, :],
+            self.actions[batch_inds].reshape(-1, 1),
             next_obs,
-            # Only use dones that are not due to timeouts
-            # deactivated by default (timeouts is initialized as an array of False)
-            (
-                self.dones[batch_inds, env_indices]
-                * (1 - self.timeouts[batch_inds, env_indices])
-            ).reshape(-1, 1),
-            self.rewards[batch_inds, env_indices].reshape(-1, 1),
+            self.dones[batch_inds].reshape(-1, 1),
+            self.rewards[batch_inds].reshape(-1, 1),
         )
         return ReplayBufferSamples(*tuple(map(self.to_torch, data)))
 

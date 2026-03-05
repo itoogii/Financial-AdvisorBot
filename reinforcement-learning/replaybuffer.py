@@ -225,9 +225,9 @@ class ReplayBuffer(BaseBuffer):
 
     observations: np.ndarray
     next_observations: np.ndarray
-    actions: int
-    rewards: np.float32
-    dones: bool
+    actions: np.ndarray
+    rewards: np.ndarray
+    dones: np.ndarray
 
     def __init__(
         self,
@@ -262,11 +262,11 @@ class ReplayBuffer(BaseBuffer):
 
         self.actions = np.zeros(
             (self.buffer_size, 1),
-            dtype=self._maybe_cast_dtype(action_space.dtype),  # type: int64
+            dtype=self._maybe_cast_dtype(action_space.dtype),  # type: int32
         )
 
         self.rewards = np.zeros((self.buffer_size, 1), dtype=np.float32)
-        self.dones = np.zeros((self.buffer_size, 1), dtype=bool)
+        self.dones = np.zeros((self.buffer_size, 1), dtype=np.int8)
 
         if psutil is not None:
             total_memory_usage: float = (
@@ -308,7 +308,7 @@ class ReplayBuffer(BaseBuffer):
         self.actions[self.pos] = action
         self.rewards[self.pos] = reward
         self.dones[self.pos] = done
-
+        # print(self.dones[self.pos])
         self.pos += 1
         if self.pos == self.buffer_size:
             self.full = True
@@ -350,6 +350,8 @@ class ReplayBuffer(BaseBuffer):
             self.dones[batch_inds].reshape(-1, 1),
             self.rewards[batch_inds].reshape(-1, 1),
         )
+        # print("rewards dtype: ", data[4].dtype)
+        # print("data dones: ", data[3].dtype)
         return ReplayBufferSamples(*tuple(map(self.to_torch, data)))
 
     @staticmethod

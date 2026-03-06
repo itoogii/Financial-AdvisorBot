@@ -1,0 +1,1 @@
+{"last_index": 3, "global_step": 13215, "logs": [{"ticker": "PKE", "reward": 1436.0, "accuracy": 840, "loss": null}, {"ticker": "HNNA", "reward": 1325.0, "accuracy": 801, "loss": null}, {"ticker": "FOXF", "reward": 71.0, "accuracy": 384, "loss": null}]}

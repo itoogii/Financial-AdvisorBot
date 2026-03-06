@@ -35,5 +35,6 @@ parquet_test_data/
 parquet_train_data/
 validation_dataset/
 train_dataset/
+dataset*
 wandb/
 runs/

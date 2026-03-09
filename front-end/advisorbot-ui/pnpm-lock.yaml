@@ -11,6 +11,9 @@ importers:
       '@ai-sdk/react':
         specifier: ^3.0.118
         version: 3.0.118(react@19.2.3)(zod@4.3.6)
+      ai:
+        specifier: ^6.0.116
+        version: 6.0.116(zod@4.3.6)
       ai-sdk-ollama:
         specifier: ^3.8.0
         version: 3.8.0(ai@6.0.116(zod@4.3.6))(zod@4.3.6)

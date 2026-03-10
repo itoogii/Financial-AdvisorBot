@@ -1,0 +1,8 @@
+pandas
+numpy
+torch
+fastapi[standard-no-fastapi-cloud-cli]
+uvicorn
+yfinance
+ta
+pytest

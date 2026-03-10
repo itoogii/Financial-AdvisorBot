@@ -21,12 +21,12 @@ async def get_estimate(ticker: str):
     df = data_collector(ticker)
     observation = data_preprocessing(df)
     if observation is None:
-        return {"tool_response": f"Unfortunately, there is not enough data available for the ticker {ticker}. Unable to estimate the trend!"}
+        return {"tool_response": f"There is not enough data available for the ticker {ticker}. Unable to estimate the trend."}
     with torch.no_grad():
         # since now I am using np.float32(60, 5) shape observation, I need to change it to torch.tensor(1, 60, 5) shape before passing to the network
         observation = torch.tensor(observation, dtype=torch.float32).to(device)
         q_values = q_network(observation)
         action_index = int(torch.argmax(q_values, dim=1).item())
-    
-    action = ["hold", "buy", "sell"][action_index]
-    return {"tool_response": f"The DQN Agent estimates that the trend for {ticker} is: {action}. Please remind the user that the estimate can be wrong!"}
+    action = ["neutral", "rise", "fall"][action_index]
+    print("Estimated action index:", action_index, f"The DQN Agent estimates that the trend for {ticker} is: {action}.")
+    return {f"The AI predicts that the trend for {ticker} is: {action}. Remind user the risk of investment decision on this estimation."}

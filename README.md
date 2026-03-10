@@ -19,15 +19,25 @@ The project CM3070 - Financial advisor bot.
   </li>
   <li>fine-tuning</li>
   <li>reinforcement-learning</li>
-  <li>front-end-web</li>
+  <li>front-end</li>
+  <li>back-end</li>
 </ol>
 
+## Project parts
+### Part 1: Multi-turn conversation synthetic data generation
 
-- ReinforcementL: Reinforcement Learning setup
+### Part 2: Fine-tuning small language model
 
-- Front-End: Web application interface
 
-- Backend: 
+### Part 3: Reinforcement Learning
+Data Engineering (Collection, Exploration, Preprocessing)
+
+### Part 4: Front-End 
+Web application interface
+
+### Part 5: Back-end
+Simple FastAPI implementation with single API endpoint to utilize the DQN RL model to predict the trend.
+
 
 ### Model selection
 Llama3 and Gemma3 license restricts the engagement in unlicensed financial practice.

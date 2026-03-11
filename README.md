@@ -1,57 +1,59 @@
-# Financial Advisor Bot
+# &#129517; Financial Advisor Bot
 
-The project CM3070 - Financial advisor bot. 
+&#127891; The project for CM3070
 
 ## Project Structure  
-<ol style="padding-left: 0.5; margin-left: 0.5;">
-  <li>synthetic-data-generation (renamed from "AdviceGen" on Jan 20, 2026)
-    <ul>
-      <li>crewai: CrewAI Agentic Synthetic data generation
-        <ul>
-          <li>consultgen: The CrewAI crews test to generate synthetic data (early version)</li>
-          <li>conv-flow: The CrewAI Flows to control the synthetic data generation </li>
-          <li>crewai-book: The jupyter notebooks to evaluate the CrewAI.</li>
-        </ul>
-      </li>
-      <li>experimentation: Evaluate LLM services in python</li>
-      <li>ms-agent-fw: Microsoft Agent Framework</li>
-    </ul>
-  </li>
-  <li>fine-tuning</li>
-  <li>reinforcement-learning</li>
-  <li>front-end</li>
-  <li>back-end</li>
-</ol>
+
+- [Synthetic Dataset generation](#part-1-multi-turn-conversation-synthetic-data-generation)
+  - [User-Persona and Scenario generation using Agentic AI](#section-1-user-persona-creation-plus-conversation-topics-for-each-personas)
+  - [Multi-turn conversation dataset generation using Agentic AI](#section-2-conversation-dataset-creation)
+- [Model Fine-tuning](#part-2-fine-tuning-small-language-model)
+- [Reinforcement Learning](#part-3-reinforcement-learning)
+- [FrontEnd Web interface](#part-4-front-end)
+- [BackEnd API endpoint](#part-5-back-end)
 
 ## Project parts
 ### Part 1: Multi-turn conversation synthetic data generation
+I used the GPT-4.1 model on Azure AI Foundry to generate 147 user personas and plan over 1400 multi-turn conversation scenarios between those personas and a financial expert. Total 40 million tokens used. 
+
+* &#128194; synthetic-data-generation </br>
+  * &#128194; crewai (CrewAI Agentic Synthetic data generation) </br>
+    * &#128193; consultgen (Tested crews to generate synthetic data) </br>
+    * &#128193; conv-flow (Synthetic dataset generation using CrewAI Flows) </br>
+    * &#128193; crewai-book (CrewAI practice notebook) </br>
+  * &#128194; experimentation (Practice and test scripts and notebook) </br>
+  * &#128194; ms-agent-fw (Synthetic conversation dataset using Microsoft Agent Framework) </br>
+
+
+#### Section 1: User persona creation plus conversation topics for each personas
+I used CrewAI to create multi-agent task flows that generated 147 individual user personas, each with their own unique scenarios for initiating financial advice conversations.
+
+<div>
+  <img src="./assets/Bethany_Morgan.png" alt="Alt text" width="500">
+  <p>The generated image is for illustration purpose only (Microsoft Copilot GPT-5.1):</p>
+</div>
+
+#### Section 2: Conversation dataset creation
+I used the Microsoft Agent Framework (formerly AutoGen) to simulate multi-turn conversations between users seeking financial advice and a professional financial expert.</br>
 
 ### Part 2: Fine-tuning small language model
-
+#### Model
+&#9940; Llama3 and Gemma3 restricts the engagement in unlicensed financial practice. </br>
+&#10071; Phi3.5 and Phi4 had issues with fine-tuning in Unsloth. </br>
+&#127752; Owen3 has permissive license, no issues in Unsloth and worked perfectly. 
 
 ### Part 3: Reinforcement Learning
-Data Engineering (Collection, Exploration, Preprocessing)
+&#128218; 1. Data Engineering (Collection, Exploration, Preprocessing) </br>
+&#128187; 2. Data loading for the state and observations </br>
+&#128185; 3. Marked Environment creation using Farama's Gymnasium </br>
+&#129516; 4. DQN network, DQN-Agent, Replay buffer, DQN-training implementations
 
 ### Part 4: Front-End 
-Web application interface
+Web application development using Next.js AI SDK. 
 
 ### Part 5: Back-end
 Simple FastAPI implementation with single API endpoint to utilize the DQN RL model to predict the trend.
 
 
-### Model selection
-Llama3 and Gemma3 license restricts the engagement in unlicensed financial practice.
-Owen3 suits my financial advisor application. 
 
-
-
-## Synthetic data generation
-147 individual user personas are generated with their own scenarios for the conversation generation. 
-The image is generated for illustration only (tool: Microsoft Copilot GPT-5.1)
-<div>
-  <img src="./assets/Bethany_Morgan.png" alt="Alt text" width="500">
-</div>
-
-## Model fine-tune
-The Qwen3-4B-Instruct model is fine-tuned with the synthetic multi-turn conversational dataset using Unsloth. 
 

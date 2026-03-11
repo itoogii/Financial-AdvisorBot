@@ -29,4 +29,4 @@ async def get_estimate(ticker: str):
         action_index = int(torch.argmax(q_values, dim=1).item())
     action = ["neutral", "rise", "fall"][action_index]
     print("Estimated action index:", action_index, f"The DQN Agent estimates that the trend for {ticker} is: {action}.")
-    return {f"The AI predicts that the trend for {ticker} is: {action}. Remind user the risk of investment decision on this estimation."}
+    return {f"The AI predicts that the trend for {ticker} is: {action}. Remind user the investment risks associated with this prediction."}

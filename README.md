@@ -45,7 +45,7 @@ I used the Microsoft Agent Framework (formerly AutoGen) to simulate multi-turn c
 ### Part 3: Reinforcement Learning
 &#128218; 1. Data Engineering (Collection, Exploration, Preprocessing) </br>
 &#128187; 2. Data loading for the state and observations </br>
-&#128185; 3. Marked Environment creation using Farama's Gymnasium </br>
+&#128185; 3. Market Environment creation using Farama's Gymnasium </br>
 &#129516; 4. DQN network, DQN-Agent, Replay buffer, DQN-training implementations
 
 ### Part 4: Front-End 

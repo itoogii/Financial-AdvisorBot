@@ -4,6 +4,14 @@ import { useChat } from '@ai-sdk/react';
 import { useCallback, useMemo, useState, Fragment } from "react";
 import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
 import type { ToolUIPart } from "ai";
+import { useTheme } from "next-themes"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Conversation,
   ConversationContent,
@@ -13,12 +21,6 @@ import {
   Message,
   MessageActions,
   MessageAction,
-  MessageBranch,
-  MessageBranchContent,
-  MessageBranchNext,
-  MessageBranchPage,
-  MessageBranchPrevious,
-  MessageBranchSelector,
   MessageContent,
   MessageResponse,
 } from "@/components/ai-elements/message";
@@ -27,15 +29,11 @@ import {
   PromptInputBody,
   PromptInputButton,
   PromptInputFooter,
-  PromptInputHeader,
   PromptInputSubmit,
   PromptInputTextarea,
-  PromptInputTools,
 } from "@/components/ai-elements/prompt-input";
 import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
-import { CheckIcon, GlobeIcon, RefreshCcwIcon, CopyIcon  } from "lucide-react";
-import { nanoid } from "nanoid";
-import { toast } from "sonner";
+import { RefreshCcwIcon, CopyIcon, Moon, Sun  } from "lucide-react";
 
 
 interface MessageType {
@@ -96,7 +94,8 @@ export default function Chat() {
   };
 
   return (
-    <div className="relative flex size-full flex-col divide-y overflow-hidden">
+    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
+      <div className="flex flex-col h-full">
       <Conversation>
         <ConversationContent>
            {messages.map((message, messageIndex) => (
@@ -152,7 +151,7 @@ export default function Chat() {
             />
           ))}
         </Suggestions>
-        <div className="w-full px-4 pb-4">
+        <div className="mt-4 w-full max-w-2xl mx-auto relative">
           <PromptInput onSubmit={handleSubmit}>
             <PromptInputBody>
                <PromptInputTextarea
@@ -163,11 +162,12 @@ export default function Chat() {
                 />
             </PromptInputBody>
             <PromptInputFooter>
-              <PromptInputSubmit disabled={isSubmitDisabled} status={status} />
+              <PromptInputSubmit disabled={isSubmitDisabled} status={status} className="absolute bottom-1 right-1"/>
             </PromptInputFooter>
           </PromptInput>
         </div>
       </div>
+    </div>
     </div>
   );
 

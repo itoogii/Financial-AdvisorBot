@@ -19,6 +19,7 @@ q_network.load_state_dict(torch.load(model_path))
 async def get_estimate(ticker: str):
 
     df = data_collector(ticker)
+    last_close_price = df['Close'].iloc[-1] if not df.empty else None
     observation = data_preprocessing(df)
     if observation is None:
         return {"tool_response": f"There is not enough data available for the ticker {ticker}. Unable to estimate the trend."}
@@ -29,4 +30,4 @@ async def get_estimate(ticker: str):
         action_index = int(torch.argmax(q_values, dim=1).item())
     action = ["neutral", "rise", "fall"][action_index]
     print("Estimated action index:", action_index, f"The DQN Agent estimates that the trend for {ticker} is: {action}.")
-    return {f"The AI predicts that the trend for {ticker} is: {action}. Remind user the investment risks associated with this prediction."}
+    return {f"The last close price was ${last_close_price:.2f}. The DQN Agent predicts the trend for {ticker} as: {action}. Remind user the investment risks associated with this prediction."}

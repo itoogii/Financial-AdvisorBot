@@ -21,3 +21,13 @@ Added the Ollama provider:
 pnpm add ai-sdk-ollama
 ```
 
+Added AI Elements. Apparently, it added all components. 
+
+```bash
+pnpm dlx ai-elements@latest
+```
+
+AI Elements documentation shows that individual components installation as:
+```bash
+npx ai-elements@latest add prompt-input
+```

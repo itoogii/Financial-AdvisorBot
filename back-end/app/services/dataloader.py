@@ -1,28 +1,41 @@
 import pandas as pd
 
-
+cache = {}
 
 # To read historical stock data from yfinance Ticker object
-def data_collector(ticker: str) -> pd.DataFrame:
+def call_yfinance(ticker: str, date: str) -> pd.DataFrame:
     import yfinance as yf
-    from datetime import date
-    import datetime as dt
-    today = date.today()
-    past = dt.timedelta(days=200)
-    start_date = today - past
     try:
         stock = yf.Ticker(ticker)
         history = stock.history(
-            start=start_date, 
+            start=date, 
             interval="1d", 
             prepost=False, 
             auto_adjust = False)
-        return history
+        df = history[['Open', 'High', 'Low', 'Close', 'Adj Close','Volume']]
+        return df
     except Exception as e:
         print(f"An error occurred while loading history: {e}")
         return pd.DataFrame()
 
+# Added a cache dictionary to avoid multiple duplicate calls to Yahoo Finance API. 
+def data_collector(ticker: str) -> pd.DataFrame:
+    from datetime import date
+    import datetime as dt
+    today = date.today()
+    past = dt.timedelta(days=200)
+    start_date = (today - past).isoformat()
+    if ticker in cache:
+        cache_date, df = cache[ticker]
+        if cache_date == start_date:
+            return df
+        else:
+            del cache[ticker]
+    df = call_yfinance(ticker, start_date)
+    cache[ticker] = (start_date, df)
+    return df
 
+# Converts the dataframe to the desired format (1, 60, 5) for a single observation.
 def data_preprocessing(df: pd.DataFrame) -> pd.DataFrame:
     import numpy as np
     import ta

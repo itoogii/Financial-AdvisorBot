@@ -1,3 +1,6 @@
+
+
+
 # AdvisorBot UI
 
 I used nvm to manage my local node version installation. 
@@ -43,4 +46,32 @@ https://ui.shadcn.com/docs/dark-mode/next
 pnpm add next-themes
 pnpm dlx shadcn@latest add sidebar
 pnpm dlx shadcn@latest add sonner
+```
+
+
+# Chatbot Template
+
+[Upgraded next.js to 16.1.6](https://nextjs.org/docs/app/getting-started/upgrading)
+[Upgraded drizzle ORM](https://orm.drizzle.team/docs/get-started/postgresql-new)
+[Replaced Next-auth with Better Auth](https://better-auth.com/docs/installation)
+[Installed SQLite Better-SQL3](https://orm.drizzle.team/docs/get-started-sqlite)
+
+## Better Auth
+Added a new variable using 
+```bash
+openssl rand -base64 32
+```
+
+```env
+BETTER_AUTH_SECRET=
+```
+
+Generated the schema for better-auth using:
+```bash
+npm dlx auth@latest generate
+```
+Generated and migrated:
+```bash
+pnpm exec drizzle-kit generate
+pnpm exec drizzle-kit migrate 
 ```

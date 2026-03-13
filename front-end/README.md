@@ -31,3 +31,16 @@ AI Elements documentation shows that individual components installation as:
 ```bash
 npx ai-elements@latest add prompt-input
 ```
+
+Install better-auth
+```bash
+pnpm add better-auth
+```
+
+Install theme
+https://ui.shadcn.com/docs/dark-mode/next
+```bash
+pnpm add next-themes
+pnpm dlx shadcn@latest add sidebar
+pnpm dlx shadcn@latest add sonner
+```

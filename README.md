@@ -15,15 +15,16 @@
 ## Project parts
 ### Part 1: Multi-turn conversation synthetic data generation
 I used the GPT-4.1 model on Azure AI Foundry to generate 147 user personas and plan over 1400 multi-turn conversation scenarios between those personas and a financial expert. Total 40 million tokens used. 
-
-* &#128194; synthetic-data-generation </br>
-  * &#128194; crewai (CrewAI Agentic Synthetic data generation) </br>
-    * &#128193; consultgen (Tested crews to generate synthetic data) </br>
-    * &#128193; conv-flow (Synthetic dataset generation using CrewAI Flows) </br>
-    * &#128193; crewai-book (CrewAI practice notebook) </br>
-  * &#128194; experimentation (Practice and test scripts and notebook) </br>
-  * &#128194; ms-agent-fw (Synthetic conversation dataset using Microsoft Agent Framework) </br>
-
+```
+.
+├── &#128194; synthetic-data-generation
+│   ├── &#128194; crewai            # CrewAI Agentic Synthetic data generation
+│   |   ├── &#128193; consultgen    # Tested crews to generate synthetic data
+│   |   ├── &#128193; conv-flow     # Synthetic dataset generation using CrewAI Flows
+│   |   ├── &#128193; crewai-book   # CrewAI practice notebook
+│   ├── &#128194; experimentation   # Practice and test scripts and notebook
+│   └── &#128194; ms-agent-fw       # Synthetic conversation dataset using Microsoft Agent Framework
+```
 
 #### Section 1: User persona creation plus conversation topics for each personas
 I used CrewAI to create multi-agent task flows that generated 147 individual user personas, each with their own unique scenarios for initiating financial advice conversations.

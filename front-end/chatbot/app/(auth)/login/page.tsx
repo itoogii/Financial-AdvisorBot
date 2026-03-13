@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { authClient } from "@/app/lib/auth-client";
 import { useActionState, useEffect, useState } from "react";
 
 import { AuthForm } from "@/components/auth-form";
@@ -10,19 +10,21 @@ import { SubmitButton } from "@/components/submit-button";
 import { toast } from "@/components/toast";
 import { type LoginActionState, login } from "../actions";
 
+
 export default function Page() {
   const router = useRouter();
-
+  
   const [email, setEmail] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
-
+  
   const [state, formAction] = useActionState<LoginActionState, FormData>(
     login,
     {
       status: "idle",
     }
   );
-
+  
+  const { data : session, error, refetch, isPending, isRefetching } = authClient.useSession()
   const { update: updateSession } = useSession();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: router and updateSession are stable refs

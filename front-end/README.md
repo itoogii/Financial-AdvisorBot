@@ -89,3 +89,5 @@ Generated and migrated:
 pnpm exec drizzle-kit generate
 pnpm exec drizzle-kit migrate
 ```
+
+pnpm add ai-sdk-ollama

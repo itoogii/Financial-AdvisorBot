@@ -5,7 +5,7 @@ import { guestRegex, isDevelopmentEnvironment } from "./lib/constants";
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
+  const isAuthPage = pathname === "/login" || pathname === "/register";
   /*
    * Playwright starts the dev server and requires a 200 status to
    * begin the tests, so this ensures that the tests can start
@@ -21,7 +21,8 @@ export async function proxy(request: NextRequest) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  if (!session) {
+
+  if (!session && !isAuthPage) {
     const redirectUrl = encodeURIComponent(request.url);
 
     return NextResponse.redirect(
@@ -29,9 +30,9 @@ export async function proxy(request: NextRequest) {
     );
   }
 
-  const isGuest = guestRegex.test(session.user.email ?? "");
+  const isGuest = session?.user?.isAnonymous;
 
-  if (session && !isGuest && ["/login", "/register"].includes(pathname)) {
+  if (session && !isGuest && isAuthPage) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

@@ -78,7 +78,7 @@ export function AppSidebar({ user }: { user: AuthUser | undefined }) {
                 </span>
               </Link>
               <div className="flex flex-row gap-1">
-                {user && (
+                {user && !user.isAnonymous && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
@@ -121,7 +121,7 @@ export function AppSidebar({ user }: { user: AuthUser | undefined }) {
         <SidebarContent>
           <SidebarHistory user={user} />
         </SidebarContent>
-        <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter>
+        <SidebarFooter>{user && !user.isAnonymous && <SidebarUserNav user={user} />}</SidebarFooter>
       </Sidebar>
 
       <AlertDialog

@@ -5,7 +5,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { DataStreamProvider } from "@/components/data-stream-provider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { auth } from "@/app/lib/auth";
-import type { User } from "@/lib/db/schema/auth-schema";
+
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

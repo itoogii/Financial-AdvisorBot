@@ -1,4 +1,5 @@
 import { auth } from "@/app/lib/auth";
+import { headers } from "next/headers";
 import type { ArtifactKind } from "@/components/artifact";
 import {
   deleteDocumentsByIdAfterTimestamp,
@@ -14,11 +15,13 @@ export async function GET(request: Request) {
   if (!id) {
     return new ChatbotError(
       "bad_request:api",
-      "Parameter id is missing"
+      "Parameter id is missing",
     ).toResponse();
   }
 
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
     return new ChatbotError("unauthorized:document").toResponse();
@@ -46,11 +49,13 @@ export async function POST(request: Request) {
   if (!id) {
     return new ChatbotError(
       "bad_request:api",
-      "Parameter id is required."
+      "Parameter id is required.",
     ).toResponse();
   }
 
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
     return new ChatbotError("not_found:document").toResponse();
@@ -92,18 +97,20 @@ export async function DELETE(request: Request) {
   if (!id) {
     return new ChatbotError(
       "bad_request:api",
-      "Parameter id is required."
+      "Parameter id is required.",
     ).toResponse();
   }
 
   if (!timestamp) {
     return new ChatbotError(
       "bad_request:api",
-      "Parameter timestamp is required."
+      "Parameter timestamp is required.",
     ).toResponse();
   }
 
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
     return new ChatbotError("unauthorized:document").toResponse();

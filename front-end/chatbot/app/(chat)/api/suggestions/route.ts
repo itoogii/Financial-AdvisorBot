@@ -1,4 +1,5 @@
 import { auth } from "@/app/lib/auth";
+import { headers } from "next/headers";
 import { getSuggestionsByDocumentId } from "@/lib/db/queries";
 import { ChatbotError } from "@/lib/errors";
 
@@ -9,11 +10,13 @@ export async function GET(request: Request) {
   if (!documentId) {
     return new ChatbotError(
       "bad_request:api",
-      "Parameter documentId is required."
+      "Parameter documentId is required.",
     ).toResponse();
   }
 
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
     return new ChatbotError("unauthorized:suggestions").toResponse();

@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
+import { authClient } from "@/app/lib/auth-client";
+
 import { useActionState, useEffect, useState } from "react";
 import { AuthForm } from "@/components/auth-form";
 import { SubmitButton } from "@/components/submit-button";
@@ -19,10 +21,17 @@ export default function Page() {
     register,
     {
       status: "idle",
-    }
+    },
   );
 
-  const { update: updateSession } = useSession();
+  // const { update: updateSession } = useSession();
+  const {
+    data: session,
+    error,
+    refetch,
+    isPending,
+    isRefetching,
+  } = authClient.useSession();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: router and updateSession are stable refs
   useEffect(() => {
@@ -39,8 +48,11 @@ export default function Page() {
       toast({ type: "success", description: "Account created successfully!" });
 
       setIsSuccessful(true);
-      updateSession();
+      // updateSession();
       router.refresh();
+      (async () => {
+        await authClient.getSession();
+      })();
     }
   }, [state.status]);
 

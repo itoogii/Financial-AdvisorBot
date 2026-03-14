@@ -10,7 +10,9 @@ import {
 import { checkBotId } from "botid/server";
 import { after } from "next/server";
 import { createResumableStreamContext } from "resumable-stream";
-import { auth, type UserType } from "@/app/lib/auth";
+import { auth } from "@/app/lib/auth";
+import { headers } from "next/headers";
+// import { auth, type UserType } from "@/app/lib/auth";
 import { entitlementsByUserType } from "@/lib/ai/entitlements";
 import { allowedModelIds } from "@/lib/ai/models";
 import { type RequestHints, systemPrompt } from "@/lib/ai/prompts";
@@ -39,6 +41,8 @@ import { convertToUIMessages, generateUUID } from "@/lib/utils";
 import { generateTitleFromUserMessage } from "../../actions";
 import { type PostRequestBody, postRequestBodySchema } from "./schema";
 
+type UserType = typeof auth.$Infer.Session.user.type;
+
 export const maxDuration = 60;
 
 function getStreamContext() {
@@ -65,7 +69,12 @@ export async function POST(request: Request) {
     const { id, message, messages, selectedChatModel, selectedVisibilityType } =
       requestBody;
 
-    const [botResult, session] = await Promise.all([checkBotId(), auth()]);
+    const [botResult, session] = await Promise.all([
+      checkBotId(),
+      auth.api.getSession({
+        headers: await headers(),
+      }),
+    ]);
 
     if (botResult.isBot) {
       return new ChatbotError("unauthorized:chat").toResponse();
@@ -186,7 +195,7 @@ export async function POST(request: Request) {
         });
 
         dataStream.merge(
-          result.toUIMessageStream({ sendReasoning: isReasoningModel })
+          result.toUIMessageStream({ sendReasoning: isReasoningModel }),
         );
 
         if (titlePromise) {
@@ -237,7 +246,7 @@ export async function POST(request: Request) {
         if (
           error instanceof Error &&
           error.message?.includes(
-            "AI Gateway requires a valid credit card on file to service requests"
+            "AI Gateway requires a valid credit card on file to service requests",
           )
         ) {
           return "AI Gateway requires a valid credit card on file to service requests. Please visit https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dadd-credit-card to add a card and unlock your free credits.";
@@ -259,7 +268,7 @@ export async function POST(request: Request) {
             await createStreamId({ streamId, chatId: id });
             await streamContext.createNewResumableStream(
               streamId,
-              () => sseStream
+              () => sseStream,
             );
           }
         } catch (_) {
@@ -277,7 +286,7 @@ export async function POST(request: Request) {
     if (
       error instanceof Error &&
       error.message?.includes(
-        "AI Gateway requires a valid credit card on file to service requests"
+        "AI Gateway requires a valid credit card on file to service requests",
       )
     ) {
       return new ChatbotError("bad_request:activate_gateway").toResponse();
@@ -296,7 +305,9 @@ export async function DELETE(request: Request) {
     return new ChatbotError("bad_request:api").toResponse();
   }
 
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
     return new ChatbotError("unauthorized:chat").toResponse();

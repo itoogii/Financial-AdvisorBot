@@ -3,8 +3,10 @@
 import { ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import type { User } from "next-auth";
-import { signOut, useSession } from "next-auth/react";
+// import type { User } from "next-auth";
+import { auth } from "@/app/lib/auth";
+// import { signOut, useSession } from "next-auth/react";
+import { authClient } from "@/app/lib/auth-client";
 import { useTheme } from "next-themes";
 import {
   DropdownMenu,
@@ -22,9 +24,17 @@ import { guestRegex } from "@/lib/constants";
 import { LoaderIcon } from "./icons";
 import { toast } from "./toast";
 
-export function SidebarUserNav({ user }: { user: User }) {
+type AuthUser = typeof auth.$Infer.Session.user;
+
+export function SidebarUserNav({ user }: { user: AuthUser }) {
   const router = useRouter();
-  const { data, status } = useSession();
+  const {
+    data,
+    isPending, //loading state
+    error, //error object
+    refetch, //refetch the session
+  } = authClient.useSession();
+  // const { data, status } = useSession();
   const { setTheme, resolvedTheme } = useTheme();
 
   const isGuest = guestRegex.test(data?.user?.email ?? "");
@@ -34,7 +44,7 @@ export function SidebarUserNav({ user }: { user: User }) {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            {status === "loading" ? (
+            {isPending === true ? (
               <SidebarMenuButton className="h-10 justify-between bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
                 <div className="flex flex-row gap-2">
                   <div className="size-6 animate-pulse rounded-full bg-zinc-500/30" />
@@ -55,7 +65,7 @@ export function SidebarUserNav({ user }: { user: User }) {
                   alt={user.email ?? "User Avatar"}
                   className="rounded-full"
                   height={24}
-                  src={`https://avatar.vercel.sh/${user.email}`}
+                  src={user.image ?? `https://avatar.vercel.sh/${user.email}`}
                   width={24}
                 />
                 <span className="truncate" data-testid="user-email">
@@ -83,8 +93,8 @@ export function SidebarUserNav({ user }: { user: User }) {
             <DropdownMenuItem asChild data-testid="user-nav-item-auth">
               <button
                 className="w-full cursor-pointer"
-                onClick={() => {
-                  if (status === "loading") {
+                onClick={async () => {
+                  if (isPending === true) {
                     toast({
                       type: "error",
                       description:
@@ -97,8 +107,12 @@ export function SidebarUserNav({ user }: { user: User }) {
                   if (isGuest) {
                     router.push("/login");
                   } else {
-                    signOut({
-                      redirectTo: "/",
+                    await authClient.signOut({
+                      fetchOptions: {
+                        onSuccess: () => {
+                          router.push("/"); // redirect
+                        },
+                      },
                     });
                   }
                 }}

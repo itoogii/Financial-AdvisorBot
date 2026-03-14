@@ -1,8 +1,5 @@
-import { InferSelectModel, relations, sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
-
-export type User = InferSelectModel<typeof user>;
-export type Session = InferSelectModel<typeof session>;
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),

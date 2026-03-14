@@ -2,14 +2,12 @@
 
 import { z } from "zod";
 
-import { createUser, getUser } from "@/lib/db/queries";
-
-import { auth } from "@/app/lib/auth"
+import { auth } from "@/app/lib/auth";
 
 const authFormSchema = z.object({
-    name: z.string().min(2).max(100),
-    email: z.email(),
-    password: z.string().min(6),
+  name: z.string().min(2).max(100),
+  email: z.email(),
+  password: z.string().min(6),
 });
 
 export type LoginActionState = {
@@ -18,7 +16,7 @@ export type LoginActionState = {
 
 export const login = async (
   _: LoginActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<LoginActionState> => {
   try {
     const validatedData = authFormSchema.parse({
@@ -26,13 +24,12 @@ export const login = async (
       password: formData.get("password"),
     });
 
-      await auth.api.signInEmail(
-          {
-              body: {
-                  email: validatedData.email,
-                  password: validatedData.password,
-              }
-          } );
+    await auth.api.signInEmail({
+      body: {
+        email: validatedData.email,
+        password: validatedData.password,
+      },
+    });
 
     return { status: "success" };
   } catch (error) {
@@ -56,41 +53,39 @@ export type RegisterActionState = {
 
 export const register = async (
   _: RegisterActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<RegisterActionState> => {
   try {
     const validatedData = authFormSchema.parse({
-        name: formData.get("name"),
-        email: formData.get("email"),
-        password: formData.get("password"),
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
     });
 
-    const [user] = await getUser(validatedData.email);
-
-    if (user) {
-      return { status: "user_exists" } as RegisterActionState;
-    }
     await auth.api.signUpEmail({
-    body: {
+      body: {
         name: validatedData.name, // required
         email: validatedData.email, // required
         password: validatedData.password, // required
         image: "https://example.com/image.png",
         callbackURL: "https://example.com/callback",
-    },
-});
-    await auth.api.signInEmail(
-          {
-              body: {
-                  email: validatedData.email,
-                  password: validatedData.password,
-              }
-          } );
+      },
+    });
+    // await auth.api.signInEmail(
+    //       {
+    //           body: {
+    //               email: validatedData.email,
+    //               password: validatedData.password,
+    //           }
+    //       } );
 
     return { status: "success" };
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof z.ZodError) {
       return { status: "invalid_data" };
+    }
+    if (error.code === "USER_ALREADY_EXISTS") {
+      return { status: "user_exists" };
     }
 
     return { status: "failed" };

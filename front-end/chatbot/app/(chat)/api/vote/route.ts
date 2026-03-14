@@ -1,4 +1,5 @@
 import { auth } from "@/app/lib/auth";
+import { headers } from "next/headers";
 import { getChatById, getVotesByChatId, voteMessage } from "@/lib/db/queries";
 import { ChatbotError } from "@/lib/errors";
 
@@ -9,11 +10,13 @@ export async function GET(request: Request) {
   if (!chatId) {
     return new ChatbotError(
       "bad_request:api",
-      "Parameter chatId is required."
+      "Parameter chatId is required.",
     ).toResponse();
   }
 
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
     return new ChatbotError("unauthorized:vote").toResponse();
@@ -45,7 +48,7 @@ export async function PATCH(request: Request) {
   if (!chatId || !messageId || !type) {
     return new ChatbotError(
       "bad_request:api",
-      "Parameters chatId, messageId, and type are required."
+      "Parameters chatId, messageId, and type are required.",
     ).toResponse();
   }
 

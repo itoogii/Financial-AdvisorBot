@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { auth } from "@/app/lib/auth";
+import { headers } from "next/headers";
 
 // Use Blob instead of File since File is not available in Node.js environment
 const FileSchema = z.object({
@@ -18,7 +19,9 @@ const FileSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -39,7 +42,7 @@ export async function POST(request: Request) {
     const validatedFile = FileSchema.safeParse({ file });
 
     if (!validatedFile.success) {
-      const errorMessage = validatedFile.error.errors
+      const errorMessage = validatedFile.error.issues
         .map((error) => error.message)
         .join(", ");
 
@@ -49,9 +52,10 @@ export async function POST(request: Request) {
     // Get filename from formData since Blob doesn't have name property
     const filename = (formData.get("file") as File).name;
     const fileBuffer = await file.arrayBuffer();
-
+    const extension = filename.split(".").pop();
+    const uniqueFilename = `users/${session.user.id}/${Date.now()}.${extension}`;
     try {
-      const data = await put(`${filename}`, fileBuffer, {
+      const data = await put(`${uniqueFilename}`, fileBuffer, {
         access: "public",
       });
 
@@ -62,7 +66,7 @@ export async function POST(request: Request) {
   } catch (_error) {
     return NextResponse.json(
       { error: "Failed to process request" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

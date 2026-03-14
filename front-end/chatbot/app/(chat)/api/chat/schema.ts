@@ -9,13 +9,13 @@ const filePartSchema = z.object({
   type: z.enum(["file"]),
   mediaType: z.enum(["image/jpeg", "image/png"]),
   name: z.string().min(1).max(100),
-  url: z.string().url(),
+  url: z.url(),
 });
 
 const partSchema = z.union([textPartSchema, filePartSchema]);
 
 const userMessageSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   role: z.enum(["user"]),
   parts: z.array(partSchema),
 });
@@ -28,7 +28,7 @@ const messageSchema = z.object({
 });
 
 export const postRequestBodySchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   // Either a single new message or all messages (for tool approvals)
   message: userMessageSchema.optional(),
   messages: z.array(messageSchema).optional(),

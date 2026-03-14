@@ -48,6 +48,7 @@
     "@vercel/otel": "^2.1.1",
     "@xyflow/react": "^12.10.1",
     "ai": "6.0.116",
+    "ai-sdk-ollama": "^3.8.0",
     "bcrypt-ts": "^8.0.1",
     "better-auth": "^1.5.5",
     "better-sqlite3": "^12.6.2",

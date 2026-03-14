@@ -11,6 +11,7 @@ import {
   updateChatVisibilityById,
 } from "@/lib/db/queries";
 import { getTextFromMessage } from "@/lib/utils";
+import { ollama } from "ai-sdk-ollama";
 
 export async function saveChatModelAsCookie(model: string) {
   const cookieStore = await cookies();
@@ -23,7 +24,8 @@ export async function generateTitleFromUserMessage({
   message: UIMessage;
 }) {
   const { text } = await generateText({
-    model: getTitleModel(),
+    // model: getTitleModel(),
+    model: ollama("qwen3-unsloth-finadvisor"),
     system: titlePrompt,
     prompt: getTextFromMessage(message),
   });

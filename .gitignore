@@ -13,7 +13,7 @@ __pycache__/
 lora*
 checkpoints/
 unsloth*
-model*
+model/
 qwen-model
 outputs
 llama.cpp

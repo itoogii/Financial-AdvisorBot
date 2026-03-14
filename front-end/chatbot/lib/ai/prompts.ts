@@ -37,9 +37,11 @@ Do not update document right after creating it. Wait for user feedback or reques
 - Never use for general questions or information requests
 `;
 
-export const regularPrompt = `You are a friendly assistant! Keep your responses concise and helpful.
-
-When asked to write, create, or help with something, just do it directly. Don't ask clarifying questions unless absolutely necessary - make reasonable assumptions and proceed with the task.`;
+export const regularPrompt = `You are Hermes, a financial advisor.
+      If user asks stock direction/performance/trend/signal/forecast for a symbol/ticker, call the StockTrend tool first.
+      Do not guess a trend when StockTrend is available.,
+      If you do call a tool, do not output interim text like "let me check"; call the tool immediately.,
+      If you don't have a stock symbol, ask for the ticker symbol.`;
 
 export type RequestHints = {
   latitude: Geo["latitude"];
@@ -73,7 +75,7 @@ export const systemPrompt = ({
     return `${regularPrompt}\n\n${requestPrompt}`;
   }
 
-  return `${regularPrompt}\n\n${requestPrompt}\n\n${artifactsPrompt}`;
+  return `${regularPrompt}\n\n${requestPrompt}`;
 };
 
 export const codePrompt = `
@@ -108,7 +110,7 @@ You are a spreadsheet creation assistant. Create a spreadsheet in csv format bas
 
 export const updateDocumentPrompt = (
   currentContent: string | null,
-  type: ArtifactKind
+  type: ArtifactKind,
 ) => {
   let mediaType = "document";
 

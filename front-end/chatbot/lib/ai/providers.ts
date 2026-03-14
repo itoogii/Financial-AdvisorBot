@@ -1,4 +1,5 @@
 import { gateway } from "@ai-sdk/gateway";
+import { ollama } from "ai-sdk-ollama";
 import {
   customProvider,
   extractReasoningMiddleware,

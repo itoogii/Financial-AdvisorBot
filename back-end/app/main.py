@@ -28,6 +28,6 @@ async def get_estimate(ticker: str):
         observation = torch.tensor(observation, dtype=torch.float32).to(device)
         q_values = q_network(observation)
         action_index = int(torch.argmax(q_values, dim=1).item())
-    action = ["neutral", "rise", "fall"][action_index]
+    action = ["", "rise", "fall"][action_index]
     print("Estimated action index:", action_index, f"The DQN Agent estimates that the trend for {ticker} is: {action}.")
-    return {f"The last close price was ${last_close_price:.2f}. The DQN Agent predicts the trend for {ticker} as: {action}. Remind user the investment risks associated with this prediction."}
+    return {f"The agent predicts the trend for {ticker} as: {action}. Remind user the investment risks associated with this prediction."}

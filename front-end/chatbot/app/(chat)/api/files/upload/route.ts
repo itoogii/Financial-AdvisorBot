@@ -1,4 +1,5 @@
-import { put } from "@vercel/blob";
+// import { put } from "@vercel/blob";
+import { put } from "@/lib/blob/s3-client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -51,13 +52,11 @@ export async function POST(request: Request) {
 
     // Get filename from formData since Blob doesn't have name property
     const filename = (formData.get("file") as File).name;
-    const fileBuffer = await file.arrayBuffer();
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
     const extension = filename.split(".").pop();
     const uniqueFilename = `users/${session.user.id}/${Date.now()}.${extension}`;
     try {
-      const data = await put(`${uniqueFilename}`, fileBuffer, {
-        access: "public",
-      });
+      const data = await put(fileBuffer, `${uniqueFilename}`);
 
       return NextResponse.json(data);
     } catch (_error) {

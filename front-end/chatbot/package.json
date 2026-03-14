@@ -21,6 +21,7 @@
     "@ai-sdk/gateway": "^3.0.66",
     "@ai-sdk/provider": "^3.0.8",
     "@ai-sdk/react": "3.0.118",
+    "@aws-sdk/client-s3": "^3.1009.0",
     "@codemirror/lang-javascript": "^6.2.5",
     "@codemirror/lang-python": "^6.2.1",
     "@codemirror/state": "^6.6.0",

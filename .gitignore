@@ -19,7 +19,8 @@ outputs
 llama.cpp
 *.gguf
 *.bin
-*.pth
+dqn_*.pth
+model_*.pth
 *.ckpt
 *.safetensors
 phi-3.5_conversational/
@@ -39,10 +40,14 @@ dataset*
 wandb/
 runs/
 
+# Database and files
 redis-storage/
 dump.rdb
+sqlite.db*
 
-# from Gemini-chatbot template https://github.com/vercel-labs/gemini-chatbot?tab=readme-ov-file
+
+
+# Following are copied from the Vercel Chatbot template .gitignore file.
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
@@ -68,6 +73,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+
 # local env files
 .env.local
 .env.development.local
@@ -79,8 +85,10 @@ yarn-error.log*
 
 .env
 .vercel
-.vscode
 .env*.local
 
-# typescript
-*.tsbuildinfo
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/*

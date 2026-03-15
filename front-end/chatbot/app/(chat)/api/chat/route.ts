@@ -19,7 +19,7 @@ import { type RequestHints, systemPrompt } from "@/lib/ai/prompts";
 import { getLanguageModel } from "@/lib/ai/providers";
 import { ollama } from "ai-sdk-ollama";
 import { getStockTrend } from "@/lib/ai/tools/get-stock-trend";
-import { getWeather } from "@/lib/ai/tools/get-weather";
+import { getPrice } from "@/lib/ai/tools/get-stock-price";
 import { isProductionEnvironment } from "@/lib/constants";
 import {
   createStreamId,
@@ -167,27 +167,9 @@ export async function POST(request: Request) {
           system: systemPrompt({ selectedChatModel, requestHints }),
           messages: modelMessages,
           stopWhen: stepCountIs(5),
-          // experimental_activeTools: isReasoningModel
-          //   ? []
-          //   : [
-          //       "getWeather",
-          //       "createDocument",
-          //       "updateDocument",
-          //       "requestSuggestions",
-          //     ],
-          // providerOptions: isReasoningModel
-          //   ? {
-          //       anthropic: {
-          //         thinking: { type: "enabled", budgetTokens: 10_000 },
-          //       },
-          //     }
-          //   : undefined,
           tools: {
             getStockTrend,
-            // getWeather,
-            // createDocument: createDocument({ session, dataStream }),
-            // updateDocument: updateDocument({ session, dataStream }),
-            // requestSuggestions: requestSuggestions({ session, dataStream }),
+            getPrice,
           },
           experimental_telemetry: {
             isEnabled: isProductionEnvironment,

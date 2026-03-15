@@ -62,4 +62,59 @@ Web application development using Next.js AI SDK.
 
 ### Part 5: Back-end
 
-Simple FastAPI implementation with single API endpoint to utilize the DQN RL model to predict the trend.
+Simple FastAPI implementation with two API endpoints to utilize the DQN RL model to predict the trend.
+
+## Deployment
+
+This project is aimed at deploying on a local system.
+
+Here are the steps to run.
+
+### Backend service: </br>
+
+```bash
+$ source ~/pythonenvs/advisorbot-backend-3.14/bin/activate
+$ cd back-end
+$ fastapi dev
+```
+
+### Language model: </br>
+
+The fine-tuned model is uploaded to Huggingface model repository. [Click to download the model &#9875;](https://huggingface.co/Battogtokh/Qwen3-4B-Instruct-unsloth-FinAdvisor-gguf).
+
+I installed ollama on my local machine, and created the model using the ./Modelfile (please make sure the model name is the same in FROM field if downloaded).
+
+```bash
+$ cd fine-tuning
+$ ollama create qwen3-unsloth-finadvisor -f ./Modelfile
+```
+
+(&#9940; Not necessary) To run the model explictly:
+
+```bash
+$ ollama run qwen3-unsloth-finadvisor:latest
+```
+
+&#9977; Note that it wasn't necessary to run the model as ollama service on my WSL can run the model all by itself on calls from the AI SDK or API calls to http://localhost:11434/api/chat. The ollama service is always active and listening on my local machine. Ollama releases system resources after timeout.
+
+### Frontend service: </br>
+
+Please note that the internal tools (under /chatbot/lib/ai/tools) are using "localhost" address to connect to the backend service endpoints.
+I could have implemented the .env variable to update the addresses. But my intention is to run on my local machine and it is out of the scope for now.
+
+```bash
+$ nvm install 24.14.0
+$ nvm use v24.14.0
+$ npm install -g pnpm
+$ cd front-end/chatbot
+$ pnpm install
+$ pnpm exec drizzle-kit generate
+$ pnpm exec drizzle-kit migrate
+$ pnpm run dev
+```
+
+Optional. The app safely fails without redis. I used docker to run the redis:
+
+```bash
+docker run --name fin-redis -d -v $(pwd)/redis-storage:/data redis:8-alpine redis-server --save 60 1 --loglevel warning
+```

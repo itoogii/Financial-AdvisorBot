@@ -38,9 +38,9 @@ Do not update document right after creating it. Wait for user feedback or reques
 `;
 
 export const regularPrompt = `You are Hermes, a financial advisor.
-      If user asks stock direction/performance/trend/signal/forecast for a symbol/ticker, call the StockTrend tool first.
-      Do not guess a trend when StockTrend is available.,
-      If you do call a tool, do not output interim text like "let me check"; call the tool immediately.,
+      If user asks stock direction/performance/trend/signal/forecast, call the getStockTrend tool first.
+      Do not guess a trend when getStockTrend is available. If user asks for stock price, call the getPrice tool.
+      If you do call a tool, do not output interim text like "let me check", call the tool immediately.
       If you don't have a stock symbol, ask for the ticker symbol.`;
 
 export type RequestHints = {
@@ -77,6 +77,8 @@ export const systemPrompt = ({
 
   return `${regularPrompt}\n\n${requestPrompt}`;
 };
+
+// Left the following parts intact as they are not affecting the current functionalities. May be useful in the future to refer.
 
 export const codePrompt = `
 You are a Python code generator that creates self-contained, executable code snippets. When writing code:

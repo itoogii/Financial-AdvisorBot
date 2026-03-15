@@ -113,7 +113,7 @@ $ pnpm exec drizzle-kit migrate
 $ pnpm run dev
 ```
 
-Optional. The app safely fails without redis. I used docker to run the redis:
+**Optional** The app safely fails without redis. I used docker to run the redis:
 
 ```bash
 docker run --name fin-redis -d -v $(pwd)/redis-storage:/data redis:8-alpine redis-server --save 60 1 --loglevel warning

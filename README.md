@@ -10,7 +10,7 @@
 - [Model Fine-tuning](#part-2-fine-tuning-small-language-model)
 - [Reinforcement Learning](#part-3-reinforcement-learning)
 - [FrontEnd Web interface](#part-4-front-end)
-- [BackEnd API endpoint](#part-5-back-end)
+- [BackEnd API](#part-5-back-end)
 
 ## Project parts
 
@@ -45,8 +45,8 @@ I used the Microsoft Agent Framework (formerly AutoGen) to simulate multi-turn c
 
 #### Model
 
-&#9940; Llama3 and Gemma3 restricts the engagement in unlicensed financial practice. </br>
-&#10071; Phi3.5 and Phi4 had issues with fine-tuning in Unsloth. </br>
+&#128683; Llama3 and Gemma3 restricts the engagement in unlicensed financial practice. </br>
+&#128680; Phi3.5 and Phi4 had issues with fine-tuning in Unsloth. </br>
 &#127752; Owen3 has permissive license, no issues in Unsloth and worked perfectly.
 
 ### Part 3: Reinforcement Learning
@@ -89,13 +89,13 @@ $ cd fine-tuning
 $ ollama create qwen3-unsloth-finadvisor -f ./Modelfile
 ```
 
-(&#9940; Not necessary) To run the model explictly:
+(&#128735; Not necessary) To run the model explictly:
 
 ```bash
 $ ollama run qwen3-unsloth-finadvisor:latest
 ```
 
-&#9977; Note that it wasn't necessary to run the model as ollama service on my WSL can run the model all by itself on calls from the AI SDK or API calls to http://localhost:11434/api/chat. The ollama service is always active and listening on my local machine. Ollama releases system resources after timeout.
+&#9977; Note that it wasn't necessary to run the model as ollama service on my WSL can run it all by itself on calls from the AI SDK or API calls to http://localhost:11434/api/chat. The ollama service is always active and listening on my local machine. Ollama releases system resources after timeout.
 
 ### Frontend service: </br>
 
@@ -113,7 +113,7 @@ $ pnpm exec drizzle-kit migrate
 $ pnpm run dev
 ```
 
-**Optional** The app safely fails without redis. I used docker to run the redis:
+&#128679; **Optional** The app safely fails without redis. I used docker to run the redis:
 
 ```bash
 docker run --name fin-redis -d -v $(pwd)/redis-storage:/data redis:8-alpine redis-server --save 60 1 --loglevel warning

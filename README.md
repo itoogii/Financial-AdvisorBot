@@ -43,26 +43,31 @@ I used the Microsoft Agent Framework (formerly AutoGen) to simulate multi-turn c
 
 ### Part 2: Fine-tuning small language model
 
-#### Model
+#### Model selection
 
 &#128683; Llama3 and Gemma3 restricts the engagement in unlicensed financial practice. </br>
 &#128680; Phi3.5 and Phi4 had issues with fine-tuning in Unsloth. </br>
 &#127752; Owen3 has permissive license, no issues in Unsloth and worked perfectly.
 
+#### Model fine-tuning
+
+I fine-tuned the Qwen3-4B model with my multi-turn conversation dataset using Unsloth. The model is then uploaded to Huggingface.
+
 ### Part 3: Reinforcement Learning
 
+The reinforcement learning is implemented in following steps.
 &#128218; 1. Data Engineering (Collection, Exploration, Preprocessing) </br>
-&#128187; 2. Data loading for the state and observations </br>
-&#128185; 3. Market Environment creation using Farama's Gymnasium </br>
+&#128187; 2. Data loading and processing (environment state/observations data) </br>
+&#128185; 3. Custom Market Environment creation with Farama's Gymnasium </br>
 &#129516; 4. DQN network, DQN-Agent, Replay buffer, DQN-training implementations
 
-### Part 4: Front-End
+### Part 4: Back-end
 
-Web application development using Next.js AI SDK.
+Simple FastAPI implementation with two API endpoints to utilize the DQN RL model and yfinance to predict the trend.
 
-### Part 5: Back-end
+### Part 5: Front-End
 
-Simple FastAPI implementation with two API endpoints to utilize the DQN RL model to predict the trend.
+Web application development using Next.js AI SDK, AI Elements by adapting the Vercel Chatbot template.
 
 ## Deployment
 

@@ -121,7 +121,7 @@ export function AppSidebar({ user }: { user: AuthUser | undefined }) {
         <SidebarContent>
           <SidebarHistory user={user} />
         </SidebarContent>
-        <SidebarFooter>{user && !user.isAnonymous && <SidebarUserNav user={user} />}</SidebarFooter>
+        <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter>
       </Sidebar>
 
       <AlertDialog

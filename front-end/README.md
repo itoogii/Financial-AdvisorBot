@@ -91,3 +91,31 @@ pnpm exec drizzle-kit migrate
 ```
 
 pnpm add ai-sdk-ollama
+
+Links:
+https://github.com/seaweedfs/seaweedfs/wiki/nodejs-with-Seaweed-S3
+AWS SDK Client Credentials
+https://github.com/aws/aws-sdk-js-v3/blob/main/supplemental-docs/CLIENTS.md
+https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/command/PutObjectCommand/
+
+### SQLite
+
+The sqlite is initialized through the drizzle migration.
+
+To remove the user and session database entries:
+
+1. Installed the sqlite3 on local system
+
+```shell
+sudo apt install sqlite3
+```
+
+2. Used Sqlite3 to manage the database table entries for fresh start after tests.
+
+```shell
+SELECT * FROM user;
+SELECT * FROM session;
+DELETE FROM user;
+DELETE FROM session;
+.quit
+```

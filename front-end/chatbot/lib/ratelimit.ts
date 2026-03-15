@@ -20,7 +20,7 @@ function getClient() {
 }
 
 export async function checkIpRateLimit(ip: string | undefined) {
-  if (!isProductionEnvironment || !ip) {
+  if (!process.env.REDIS_URL || !isProductionEnvironment || !ip) {
     return;
   }
 

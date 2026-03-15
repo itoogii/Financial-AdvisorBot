@@ -2,8 +2,10 @@ import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/app/lib/auth";
 import { headers } from "next/headers";
 import { guestRegex, isDevelopmentEnvironment } from "./lib/constants";
+import { getSessionCookie } from "better-auth/cookies";
 
 export async function proxy(request: NextRequest) {
+  const sessionCookie = getSessionCookie(request);
   const { pathname } = request.nextUrl;
   const isAuthPage = pathname === "/login" || pathname === "/register";
   /*
@@ -22,7 +24,7 @@ export async function proxy(request: NextRequest) {
     headers: await headers(),
   });
 
-  if (!session && !isAuthPage) {
+  if ((!session && !isAuthPage) || !sessionCookie) {
     const redirectUrl = encodeURIComponent(request.url);
 
     return NextResponse.redirect(

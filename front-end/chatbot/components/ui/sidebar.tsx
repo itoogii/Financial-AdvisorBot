@@ -277,7 +277,7 @@ const Sidebar = React.forwardRef<
 Sidebar.displayName = "Sidebar";
 
 const SidebarTrigger = React.forwardRef<
-  React.ElementRef<typeof Button>,
+  React.ComponentRef<typeof Button>,
   React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
   const { toggleSidebar } = useSidebar();
@@ -331,10 +331,11 @@ const SidebarRail = React.forwardRef<
 });
 SidebarRail.displayName = "SidebarRail";
 
-const SidebarInset = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"main">
->(({ className, ...props }, ref) => {
+const SidebarInset = ({
+  className,
+  ref,
+  ...props
+}: React.ComponentProps<"main">) => {
   return (
     <main
       className={cn(
@@ -346,11 +347,11 @@ const SidebarInset = React.forwardRef<
       {...props}
     />
   );
-});
+};
 SidebarInset.displayName = "SidebarInset";
 
 const SidebarInput = React.forwardRef<
-  React.ElementRef<typeof Input>,
+  React.ComponentRef<typeof Input>,
   React.ComponentProps<typeof Input>
 >(({ className, ...props }, ref) => {
   return (
@@ -367,10 +368,11 @@ const SidebarInput = React.forwardRef<
 });
 SidebarInput.displayName = "SidebarInput";
 
-const SidebarHeader = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div">
->(({ className, ...props }, ref) => {
+const SidebarHeader = ({
+  className,
+  ref,
+  ...props
+}: React.ComponentProps<"div">) => {
   return (
     <div
       className={cn("flex flex-col gap-2 p-2", className)}
@@ -379,7 +381,7 @@ const SidebarHeader = React.forwardRef<
       {...props}
     />
   );
-});
+};
 SidebarHeader.displayName = "SidebarHeader";
 
 const SidebarFooter = React.forwardRef<

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { authClient } from "@/app/lib/auth-client";
 import { useActionState, useEffect, useState } from "react";
 
@@ -46,7 +46,8 @@ export default function Page() {
     } else if (state.status === "success") {
       setIsSuccessful(true);
       // updateSession();
-      router.refresh();
+      console.log("******************successful login******************");
+      redirect("/");
     }
   }, [state.status]);
 

@@ -1,4 +1,5 @@
-import type { UserType } from "@/app/lib/auth";
+import { auth } from "@/app/lib/auth";
+type UserType = typeof auth.$Infer.Session.user.type;
 
 type Entitlements = {
   maxMessagesPerHour: number;
@@ -16,7 +17,7 @@ export const entitlementsByUserType: Record<UserType, Entitlements> = {
    * For users with an account
    */
   regular: {
-    maxMessagesPerHour: 10,
+    maxMessagesPerHour: 1000,
   },
 
   /*

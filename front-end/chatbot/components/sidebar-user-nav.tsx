@@ -29,15 +29,17 @@ type AuthUser = typeof auth.$Infer.Session.user;
 export function SidebarUserNav({ user }: { user: AuthUser }) {
   const router = useRouter();
   const {
-    data,
+    data: session,
     isPending, //loading state
     error, //error object
     refetch, //refetch the session
   } = authClient.useSession();
   // const { data, status } = useSession();
   const { setTheme, resolvedTheme } = useTheme();
+  const isGuest = user.isAnonymous;
+  // const isGuest = session?.user?.isAnonymous;
 
-  const isGuest = guestRegex.test(data?.user?.email ?? "");
+  // const isGuest = guestRegex.test(data?.user?.email ?? "");
 
   return (
     <SidebarMenu>
@@ -100,21 +102,17 @@ export function SidebarUserNav({ user }: { user: AuthUser }) {
                       description:
                         "Checking authentication status, please try again!",
                     });
-
+                    console.warn("Auth status is still pending...");
                     return;
                   }
 
-                  if (isGuest) {
-                    router.push("/login");
-                  } else {
-                    await authClient.signOut({
-                      fetchOptions: {
-                        onSuccess: () => {
-                          router.push("/"); // redirect
-                        },
+                  await authClient.signOut({
+                    fetchOptions: {
+                      onSuccess: () => {
+                        router.push("/login"); // redirect
                       },
-                    });
-                  }
+                    },
+                  });
                 }}
                 type="button"
               >

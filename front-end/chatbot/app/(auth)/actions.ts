@@ -3,8 +3,13 @@
 import { z } from "zod";
 
 import { auth } from "@/app/lib/auth";
+import { redirect } from "next/navigation";
 
-const authFormSchema = z.object({
+const loginSchema = z.object({
+  email: z.email(),
+  password: z.string().min(6),
+});
+const signupSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.email(),
   password: z.string().min(6),
@@ -19,7 +24,7 @@ export const login = async (
   formData: FormData,
 ): Promise<LoginActionState> => {
   try {
-    const validatedData = authFormSchema.parse({
+    const validatedData = loginSchema.parse({
       email: formData.get("email"),
       password: formData.get("password"),
     });
@@ -56,7 +61,7 @@ export const register = async (
   formData: FormData,
 ): Promise<RegisterActionState> => {
   try {
-    const validatedData = authFormSchema.parse({
+    const validatedData = signupSchema.parse({
       name: formData.get("name"),
       email: formData.get("email"),
       password: formData.get("password"),
@@ -67,8 +72,6 @@ export const register = async (
         name: validatedData.name, // required
         email: validatedData.email, // required
         password: validatedData.password, // required
-        image: "https://example.com/image.png",
-        callbackURL: "https://example.com/callback",
       },
     });
     // await auth.api.signInEmail(

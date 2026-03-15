@@ -39,6 +39,9 @@ dataset*
 wandb/
 runs/
 
+redis-storage/
+dump.rdb
+
 # from Gemini-chatbot template https://github.com/vercel-labs/gemini-chatbot?tab=readme-ov-file
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 

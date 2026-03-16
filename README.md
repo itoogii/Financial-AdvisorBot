@@ -1,8 +1,8 @@
-# &#129517; Financial Advisor Bot
+# Financial Advisor Bot
 
 &#127891; The project for CM3070
 
-## Project Structure
+## &#129517; Project Structure
 
 - [Synthetic Dataset generation](#part-1-multi-turn-conversation-synthetic-data-generation)
   - [User-Persona and Scenario generation using Agentic AI](#section-1-user-persona-creation-plus-conversation-topics-for-each-personas)

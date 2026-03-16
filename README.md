@@ -55,7 +55,7 @@ I fine-tuned the Qwen3-4B model with my multi-turn conversation dataset using Un
 
 ### Part 3: Reinforcement Learning
 
-The reinforcement learning is implemented in following steps.
+The reinforcement learning is implemented in following steps.</br>
 &#128218; 1. Data Engineering (Collection, Exploration, Preprocessing) </br>
 &#128187; 2. Data loading and processing (environment state/observations data) </br>
 &#128185; 3. Custom Market Environment creation with Farama's Gymnasium </br>

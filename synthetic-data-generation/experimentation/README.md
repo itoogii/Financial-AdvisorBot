@@ -1,4 +1,4 @@
-# AI Model experiement
+# AI Model experiment
 
 I am experimenting the [Python OpenAI demos project](https://github.com/Azure-Samples/python-openai-demos) in github_models.py file. 
 

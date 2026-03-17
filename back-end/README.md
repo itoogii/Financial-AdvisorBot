@@ -2,7 +2,7 @@
 
 This is an application to provide the service for the price estimation. This service will run on FastAPI and expose endpoint for the trend prediction.
 
-## Installation
+## &#128736; Setup
 
 ### Python environment
 

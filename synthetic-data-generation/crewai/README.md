@@ -9,7 +9,7 @@ The "conv-flow" is the directory that you want to review. I used the conv-flow t
     * conv-flow (final attempt): The CrewAI Flows to control the synthetic data generation 
     * crewai-book (practice): The jupyter notebooks to practice the CrewAI. 
 
-## CrewAI installation
+## &#128736; CrewAI Setup
 
 I followed an installation instruction from [CrewAI Installation](https://docs.crewai.com/en/installation).  
 

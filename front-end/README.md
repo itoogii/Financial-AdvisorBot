@@ -4,7 +4,7 @@ I started with a new next.js project to practice and familiarize with the Vercel
 I successfully tested to run my local model on ollama with AI SDK. Please note that the AdvisorBot-UI is not the one I used for my front-end user application.
 I adapted the Vercel's Chatbot template (also using AI SDK, Next.js and AI Elements) for my front-end. See &#9875; [Chatbot AI App](#chatbot-template)
 
-### Installation
+### &#128736; Setup
 
 I used nvm to manage my local node version installation.
 

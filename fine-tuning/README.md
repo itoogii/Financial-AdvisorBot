@@ -17,7 +17,7 @@ The Jupyter notebook files are copied from unsloth tutorials.
 
 The fine-tuned Qwen3 model is uploaded to [Huggingface hub](https://huggingface.co/Battogtokh/Qwen3-4B-Instruct-unsloth-FinAdvisor-gguf).
 
-### &#9996; Setup
+### &#129520; Setup
 
 The python environment is created using 'uv' and the required packages are installed. Please refer to the Jupyter notebooks for details.
 
@@ -38,7 +38,7 @@ Third, model is tested to run
 ollama run qwen3-unsloth-finadvisor:latest
 ```
 
-## &#9997; About
+## &#128035; About
 
 Folder structure:
 

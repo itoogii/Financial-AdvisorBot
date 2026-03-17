@@ -5,6 +5,7 @@ I am experimenting the [Python OpenAI demos project](https://github.com/Azure-Sa
 ## Github Models
 The experiment code is using the code compatible with OpenAI API. 
 GitHub model inference URL: https://models.github.ai/inference
+## &#129520; Setup
 ### Python environment on my laptop
 
 I use pyenv to manage my python 3.12.12 environment. 

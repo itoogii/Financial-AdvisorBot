@@ -1,6 +1,6 @@
 # Microsoft Agent Framework
 
-## &#9996; Setup
+## &#128736; Setup
 
 I installed the Microsoft Agent Framework (MAF) package by following the instruction from [Getting Started](https://github.com/microsoft/agent-framework/blob/main/python/README.md) document.
 
@@ -18,7 +18,7 @@ pip install agent-framework --pre
 uv pip install unsloth datasets transformers torch
 ```
 
-## &#9997; About
+## &#128035; About
 
 The dialogue-dataset.jsonl is formatted in OpenAI ChatML. Refer to Unsloth Dataset guide [Link](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide/datasets-guide)
 

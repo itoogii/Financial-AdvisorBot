@@ -2,7 +2,7 @@
 
 The reinforcement learning is developed in stages of testing and exploring data source, collecting data, evaluating dataset, feature selection, data preprocessing, processing data for RL training, development of Reinforcement learning in DQN architecture and training the DQN model.
 
-## &#9996; Setup
+## &#128736; Setup
 
 Python environment setup using pyenv:
 
@@ -21,7 +21,7 @@ source ~/pythonenvs/advisorbot-rl-3.14/bin/activate
 uv pip install -r requirements.txt
 ```
 
-## &#9997; The definition
+## &#128506; The definition
 
 To forecast a future trend of the stock prices, I used a daily historical stock price dataset to train the Reinforcement learning model.
 The historical stock price dataset was sourced from Kaggle. Additionally, as that data ends in April 2020, I downloaded new market data from Yahoo Finance (using the yfinance library) to cover the period until February 2026. I removed 1944 changed or delisted tickers from the final training and test datasets (in parquet format) to ensure consistency.
@@ -48,7 +48,7 @@ Key questions for the custom environment (source: The Farama Gymnasium documenta
 - Epoch is full cycle of processing all available training data.
 - Training will terminate when it hits the minimum reward value.
 
-## Data Usage
+## &#128752; Data Usage
 
 To comply with the yfinance terms and licensing, the stock market data is used for educational and research purposes, and no raw data files (CSV/Parquet) are included in this repository.
 This project is strictly non-commercial. The analysis and models developed here are intended for academic purposes.

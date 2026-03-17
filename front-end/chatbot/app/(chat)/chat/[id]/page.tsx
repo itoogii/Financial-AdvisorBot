@@ -29,13 +29,13 @@ async function ChatPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-
-  if (!session) {
+  const isGuest = session?.user?.isAnonymous;
+  if (isGuest) {
     redirect("/api/auth/guest");
   }
 
   if (chat.visibility === "private") {
-    if (!session.user) {
+    if (!session?.user) {
       return notFound();
     }
 

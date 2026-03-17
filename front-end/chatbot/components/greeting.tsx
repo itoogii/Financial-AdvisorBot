@@ -17,12 +17,23 @@ export const Greeting = () => {
       </motion.div>
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="text-xl text-zinc-500 md:text-2xl"
+        className="text-xl text-zinc-500 md:text-2xl mt-2"
         exit={{ opacity: 0, y: 10 }}
         initial={{ opacity: 0, y: 10 }}
         transition={{ delay: 0.6 }}
       >
-        How can I help you today?
+        Please read the disclaimer
+      </motion.div>
+      <motion.div
+        animate={{ opacity: 1, y: 0 }}
+        className="text-lg text-zinc-500 md:text-xl mt-4"
+        exit={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 10 }}
+        transition={{ delay: 0.6 }}
+      >
+        UoL BS CS final project. Financial Advisor Bot may provide inaccurate
+        information. Please verify with a human financial advisor before making
+        any decisions.
       </motion.div>
     </div>
   );

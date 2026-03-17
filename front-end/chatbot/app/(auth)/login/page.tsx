@@ -23,13 +23,13 @@ export default function Page() {
     },
   );
 
-  const {
-    data: session,
-    error,
-    refetch,
-    isPending,
-    isRefetching,
-  } = authClient.useSession();
+  // const {
+  //   data: session,
+  //   error,
+  //   refetch,
+  //   isPending,
+  //   isRefetching,
+  // } = authClient.useSession();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: router and updateSession are stable refs
   useEffect(() => {
@@ -46,8 +46,8 @@ export default function Page() {
     } else if (state.status === "success") {
       setIsSuccessful(true);
       // updateSession();
-      console.log("******************successful login******************");
-      redirect("/");
+      // console.log("******************successful login******************");
+      router.push("/");
     }
   }, [state.status]);
 

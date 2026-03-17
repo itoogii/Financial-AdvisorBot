@@ -123,3 +123,12 @@ $ pnpm run dev
 ```bash
 docker run --name fin-redis -d -v $(pwd)/redis-storage:/data redis:8-alpine redis-server --save 60 1 --loglevel warning
 ```
+
+## &#128721; Disclaimer
+
+This project was developed for educational purposes as a final project.
+
+<blockquote>
+&#128313; In accordance with the model's license, all outputs must be reviewed by a qualified human before being used for any real-world decision-making. Please consult Qwen accepted use policy.</br>
+&#128312; I make no guarantees about the completeness, reliability, or accuracy of the models. Any action you take based on this project models' outputs are strictly at your own risk. </br>
+</blockquote>

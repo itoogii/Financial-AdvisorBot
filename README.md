@@ -12,9 +12,9 @@
 - [FrontEnd Web interface](#part-4-front-end)
 - [BackEnd API](#part-5-back-end)
 
-## Project parts
-
-<img src="assets/Development_phases.png" alt="Development phases illustrated" width="600px" style="border:5px solid white">
+## Project components
+</br>
+<img src="assets/Development_phases.png" alt="Development phases illustrated" width="780px" style="border:10px solid white">
 </br>
 
 ### Part 1: Multi-turn conversation synthetic data generation

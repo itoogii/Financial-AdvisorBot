@@ -48,6 +48,7 @@ export type RequestHints = {
   longitude: Geo["longitude"];
   city: Geo["city"];
   country: Geo["country"];
+  username?: string;
 };
 
 export const getRequestPromptFromHints = (requestHints: RequestHints) => `\
@@ -56,6 +57,7 @@ About the origin of user's request:
 - lon: ${requestHints.longitude}
 - city: ${requestHints.city}
 - country: ${requestHints.country}
+- username: ${requestHints.username}
 `;
 
 export const systemPrompt = ({

@@ -128,12 +128,14 @@ export async function POST(request: Request) {
       : [...convertToUIMessages(messagesFromDb), message as ChatMessage];
 
     const { longitude, latitude, city, country } = geolocation(request);
+    const username = session?.user?.name;
 
     const requestHints: RequestHints = {
       longitude,
       latitude,
       city,
       country,
+      username,
     };
 
     if (message?.role === "user") {

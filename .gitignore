@@ -44,7 +44,7 @@ runs/
 redis-storage/
 dump.rdb
 sqlite*
-sqlite.db-shm
+db/
 
 
 

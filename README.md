@@ -1,6 +1,6 @@
 # Financial Advisor Bot
 
-&#127891; The project for CM3070
+&#127891; The project for CM3070</br>
 
 ## &#129517; Project Structure
 
@@ -12,7 +12,10 @@
 - [FrontEnd Web interface](#part-4-front-end)
 - [BackEnd API](#part-5-back-end)
 
-## Project parts
+## Project components
+</br>
+<img src="assets/Development_phases.png" alt="Development phases illustrated" width="780px" style="border:10px solid white">
+</br>
 
 ### Part 1: Multi-turn conversation synthetic data generation
 

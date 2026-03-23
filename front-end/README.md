@@ -52,7 +52,7 @@ pnpm dlx shadcn@latest add sonner
 ```
 
 # Chatbot AI App
-
+<img alt="Chatbot" src="chatbot/app/(chat)/FinancialAdvisorWeb.png" width="400px"></br>
 I used the Vercel Chatbot template for my front-end application. The Chatbot template is kind of outdated though.
 As an example, the template used next-auth module which is now part of [Better-Auth](https://better-auth.com/).
 Well, I could just use the template as it is, but I wanted to make it up-to-date, and I also wanted to understand how the template was built.

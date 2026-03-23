@@ -129,6 +129,7 @@ sudo apt install sqlite3
 2. Used Sqlite3 to manage the database table entries for fresh start after tests.
 
 ```shell
+sqlite3 db/sqlite.db
 SELECT * FROM user;
 SELECT * FROM session;
 DELETE FROM user;

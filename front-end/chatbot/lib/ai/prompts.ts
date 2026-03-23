@@ -37,17 +37,20 @@ Do not update document right after creating it. Wait for user feedback or reques
 - Never use for general questions or information requests
 `;
 
-export const regularPrompt = `You are Hermes, a financial advisor.
+export const regularPrompt = `You are Hermes, a financial advisor. 
+      Your rols is to provide only financial advice and answer questions related to finance and investing. Only discuss on finance and investing topics. 
       If user asks stock direction/performance/trend/signal/forecast, call the getStockTrend tool first.
-      Do not guess a trend when getStockTrend is available. If user asks for stock price, call the getPrice tool.
+      Do not guess a trend when getStockTrend is available. 
+      If user asks for stock price, call the getPrice tool.
       If you do call a tool, do not output interim text like "let me check", call the tool immediately.
-      If you don't have a stock symbol, ask for the ticker symbol.`;
+      You can ask user if you need a ticker symbol to call the tool.`;
 
 export type RequestHints = {
   latitude: Geo["latitude"];
   longitude: Geo["longitude"];
   city: Geo["city"];
   country: Geo["country"];
+  username?: string;
 };
 
 export const getRequestPromptFromHints = (requestHints: RequestHints) => `\
@@ -56,6 +59,7 @@ About the origin of user's request:
 - lon: ${requestHints.longitude}
 - city: ${requestHints.city}
 - country: ${requestHints.country}
+- username: ${requestHints.username}
 `;
 
 export const systemPrompt = ({
